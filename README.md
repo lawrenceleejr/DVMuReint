@@ -27,6 +27,8 @@ convert model ./RPVMSSM_UFO/RPVMSSM_UFO/
 import model ./RPVMSSM_UFO/RPVMSSM_UFO/
 
 generate p p > t1 t1~, (t1 > t n1, (n1 > t b s) ), (t1~ > t~ n1, (n1 > t b s) )
+output RPVStop
+launch
 ```
 
 Running the container:
@@ -38,8 +40,53 @@ docker run --rm -ti -v $PWD:$PWD -w $PWD scailfin/madgraph5-amc-nlo:mg5_amc3.3.1
 
 This will be Taylor's primary focus at first. Because of the dependencies required, we can start from a docker image containing a full delphes installation available at `ghcr.io/scipp-atlas/mario-mapyde/delphes:latest`. Larry will attempt to create a docker image that contains CHECKMATE preinstalled made from this.
 
+
+
 ### Notes:
 
 ```bash
 docker run --rm -ti -v $PWD:$PWD -w $PWD ghcr.io/scipp-atlas/mario-mapyde/delphes:latest
 ```
+
+
+## Misc Notes
+
+```
+root@99d461f91cd0:/Users/leejr/work/DVMuReint# python -V
+Python 2.7.18
+root@99d461f91cd0:/Users/leejr/work/DVMuReint# root-config --prefix --has-minuit2
+/opt/root yes
+root@99d461f91cd0:/Users/leejr/work/DVMuReint# ls /usr/local/share/delphes/delphes/
+```
+
+Building HepMC (instructions from `INSTALL.cmake`):
+
+```bash
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/share/HepMC-2/ \
+      -Dmomentum:STRING=GEV \
+      -Dlength:STRING=MM \
+      ../HepMC-2.06.11/
+make
+make test
+make install
+```
+
+Building CheckMate:
+
+```bash
+wget https://github.com/CheckMATE2/checkmate2-LLP/archive/refs/tags/LLP.tar.gz
+tar -xzf LLP.tar.gz
+mv checkmate2-LLP-LLP/ checkmate2-LLP
+mv -T checkmate2-LLP /usr/local/share/checkmate/
+cd /usr/local/share/checkmate/
+
+apt-get install autoconf
+autoconf
+automake
+./configure --with-rootsys=/opt/root/ --with-delphes=/usr/local/share/delphes/delphes/ --with-hepmc=/usr/local/share/HepMC-2/
+make
+
+```
+
+
+
