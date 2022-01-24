@@ -3,9 +3,9 @@
 Taylor Sussmane, Karri Folan DiPetrillo, Lawrence Lee
 
 We are working to take the results of the search [ATLAS SUSY-2018-33 ("DV+mu")](
-https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-33/) and reinterpret them for the model shown in Figure 5 of [ATLAS-CONF-2018-003 ("RPC-RPV")](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/CONFNOTES/ATLAS-CONF-2018-003/). To do this, we'd like to use [CHECKMATE](checkmate.hepforge.org) since it already has the DV+mu search implemented in its LLP version.
+https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-33/) and reinterpret them for the model shown in Figure 5 of [ATLAS-CONF-2018-003 ("RPC-RPV")](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/CONFNOTES/ATLAS-CONF-2018-003/). To do this, we'd like to use [CheckMATE](checkmate.hepforge.org) since it already has the DV+mu search implemented in its LLP version.
 
-Since CHECKMATE has many dependencies, let's try to work in docker to simplify.
+Since CheckMATE has many dependencies, let's try to work in docker to simplify.
 
 ## Docker
 
@@ -36,10 +36,11 @@ Running the container:
 docker run --rm -ti -v $PWD:$PWD -w $PWD scailfin/madgraph5-amc-nlo:mg5_amc3.3.1
 ```
 
-## Running of limits (in CHECKMATE)
+## Running of limits (in CheckMATE)
 
-This will be Taylor's primary focus at first. Because of the dependencies required, we can start from a docker image containing a full delphes installation available at `ghcr.io/scipp-atlas/mario-mapyde/delphes:latest`. Larry will attempt to create a docker image that contains CHECKMATE preinstalled made from this.
+This will be Taylor's primary focus at first. Because of the dependencies required, we can start from a docker image containing a full delphes installation available at `ghcr.io/scipp-atlas/mario-mapyde/delphes:latest`. Larry will attempt to create a docker image that contains CheckMATE preinstalled made from this.
 
+Relevant search has CheckMATE code `atlas_2003_11956`.
 
 
 ### Notes:
@@ -75,6 +76,9 @@ Building CheckMate:
 
 ```bash
 wget https://github.com/CheckMATE2/checkmate2-LLP/archive/refs/tags/LLP.tar.gz
+# This didn't compile. Trying commit 4299900 (which is current HEAD)
+# Also didn't. Trying ed3e43c.
+# Also didn't. Trying 62e1702.
 tar -xzf LLP.tar.gz
 mv checkmate2-LLP-LLP/ checkmate2-LLP
 mv -T checkmate2-LLP /usr/local/share/checkmate/
