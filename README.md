@@ -38,9 +38,11 @@ docker run --rm -ti -v $PWD:$PWD -w $PWD scailfin/madgraph5-amc-nlo:mg5_amc3.3.1
 
 ## Running of limits (in CheckMATE)
 
-This will be Taylor's primary focus at first. Because of the dependencies required, we can start from a docker image containing a full delphes installation available at `ghcr.io/scipp-atlas/mario-mapyde/delphes:latest`. Larry will attempt to create a docker image that contains CheckMATE preinstalled made from this.
+This will be Taylor's primary focus at first. Because of the dependencies required, we can start from a docker image containing a full delphes installation available at `ghcr.io/scipp-atlas/mario-mapyde/delphes:latest`. Larry created a docker image that contains CheckMATE preinstalled made from this. See [https://hub.docker.com/repository/docker/lawrenceleejr/checkmate](https://hub.docker.com/repository/docker/lawrenceleejr/checkmate). `v0.2` has a successful install of CheckMATE(-LLP) at commit [4299900](https://github.com/CheckMATE2/checkmate2-LLP/tree/4299900a98a38100c31bf75222a03d3494c39714).
 
-Relevant search has CheckMATE code `atlas_2003_11956`.
+CheckMATE is located in `/usr/local/share/checkmate/` and the actual executable can be found at `/usr/local/share/checkmate/bin/CheckMATE`.
+
+DV+mu search has CheckMATE code `atlas_2003_11956`.
 
 
 ### Notes:
@@ -79,16 +81,22 @@ wget https://github.com/CheckMATE2/checkmate2-LLP/archive/refs/tags/LLP.tar.gz
 # This didn't compile. Trying commit 4299900 (which is current HEAD)
 # Also didn't. Trying ed3e43c.
 # Also didn't. Trying 62e1702.
+# Hrm. Got 4299900 to work with a fresh checkout and building with only one proc. make -j1
 tar -xzf LLP.tar.gz
 mv checkmate2-LLP-LLP/ checkmate2-LLP
 mv -T checkmate2-LLP /usr/local/share/checkmate/
 cd /usr/local/share/checkmate/
 
-apt-get install autoconf
+apt-get install autoconf libtool automake
 autoconf
 automake
 ./configure --with-rootsys=/opt/root/ --with-delphes=/usr/local/share/delphes/delphes/ --with-hepmc=/usr/local/share/HepMC-2/
 make
+
+# I then moved everything to /usr/local/share/checkmate and successfully tested the installation with
+
+cd /usr/local/share/checkmate/bin
+./CheckMATE -n example -ev=example_run_cards/auxiliary/testfile.hep -xs="1 fb" -wp8
 
 ```
 
