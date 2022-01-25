@@ -1,0 +1,17 @@
+
+import model ./RPVMSSM_UFO/RPVMSSM_UFO/
+
+generate p p > t1 t1~
+add process p p > t1 t1~ j
+add process p p > t1 t1~ j j
+
+output RPVStop
+
+
+# set nevents 10
+# set Msu3 800
+# set Mneu1 200
+# set width 1000022 1e-15
+
+
+
