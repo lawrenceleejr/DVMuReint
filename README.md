@@ -17,8 +17,17 @@ Larry will take care of getting initial HepMC files and try to document how it's
 
 This will be done via the pre-packaged docker image available at `scailfin/madgraph5-amc-nlo:mg5_amc3.3.1`.
 
-### Notes:
+There is a sample HepMC file containing two simulated events in this repository (`Sample_2Event.hepmc`). This will be useful for testing the CheckMATE workflow. A larger sample (10k events) is available here:
 
+https://www.dropbox.com/s/uaa91743egy6op4/tag_1_pythia8_events.hepmc.gz?dl=0
+
+
+
+### Notes:
+<details>
+  <summary>Click to expand!</summary>
+  
+  
 Initial MG commands.
 
 If you haven't done it yet in the docker image, you'll need to download a PDF set:
@@ -70,6 +79,9 @@ Running the container:
 ```bash
 docker run --rm -ti -v $PWD:$PWD -w $PWD scailfin/madgraph5-amc-nlo:mg5_amc3.3.1
 ```
+
+</details>
+
 
 ## Running of limits (in CheckMATE)
 
