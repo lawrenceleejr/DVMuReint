@@ -21,64 +21,64 @@ There is a sample HepMC file containing two simulated events in this repository 
 
 https://www.dropbox.com/s/uaa91743egy6op4/tag_1_pythia8_events.hepmc.gz?dl=0
 
-
+(These events are `g g > t1 t1~` with no ISR. Decaying everything in P8.)
 
 ### Notes:
+
 <details>
   <summary>Click to expand!</summary>
   
-  
-Initial MG commands.
+      Initial MG commands.
 
-If you haven't done it yet in the docker image, you'll need to download a PDF set:
+      If you haven't done it yet in the docker image, you'll need to download a PDF set:
 
-```bash
-lhapdf get NNPDF23_lo_as_0130_qed
-```
+      ```bash
+      lhapdf get NNPDF23_lo_as_0130_qed
+      ```
 
-```madgraph
-convert model ./RPVMSSM_UFO/RPVMSSM_UFO/
+      ```madgraph
+      convert model ./RPVMSSM_UFO/RPVMSSM_UFO/
 
-import model ./RPVMSSM_UFO/RPVMSSM_UFO/
+      import model ./RPVMSSM_UFO/RPVMSSM_UFO/
 
-generate p p > t1 t1~
-add process p p > t1 t1~ j
-add process p p > t1 t1~ j j
-output RPVStop
-launch
+      generate p p > t1 t1~
+      add process p p > t1 t1~ j
+      add process p p > t1 t1~ j j
+      output RPVStop
+      launch
 
-# This is currently throwing an error when trying to have P8 on.
-# RuntimeError : Info file not found for PDF set 'NNPDF23_lo_as_0130_qed'
-# I've tried running at the madgraph prompt: install lhapdf6 but that doesn't seem to solve the issue
+      # This is currently throwing an error when trying to have P8 on.
+      # RuntimeError : Info file not found for PDF set 'NNPDF23_lo_as_0130_qed'
+      # I've tried running at the madgraph prompt: install lhapdf6 but that doesn't seem to solve the issue
 
-lhapdf get NNPDF23_lo_as_0130_qed # this is needed at ther terminal
+      lhapdf get NNPDF23_lo_as_0130_qed # this is needed at ther terminal
 
-decay t1 > t n1, (n1 > t b s)
-decay t1~ > t~ n1, (n1 > t b s)
+      decay t1 > t n1, (n1 > t b s)
+      decay t1~ > t~ n1, (n1 > t b s)
 
-```
+      ```
 
-madspin card:
-```
-set max_weight_ps_point 400  # number of PS to estimate the maximum for each event
-decay t1 > t n1
-decay t1~ > t~ n1
-decay n1 > t b s
-decay t > w+ b, w+ > all all
-decay t~ > w- b~, w- > all all
-decay w+ > all all
-decay w- > all all
-decay z > all all
-launch
-```
+      madspin card:
+      ```
+      set max_weight_ps_point 400  # number of PS to estimate the maximum for each event
+      decay t1 > t n1
+      decay t1~ > t~ n1
+      decay n1 > t b s
+      decay t > w+ b, w+ > all all
+      decay t~ > w- b~, w- > all all
+      decay w+ > all all
+      decay w- > all all
+      decay z > all all
+      launch
+      ```
 
-* I'm able to run with up to 1 extra parton in the matrix element
-* Got a working job by producing just the stops in the ME. Tried MadSpin but couldn't get it to actually give the correct decays in the end. The thing that works in the end is hard-coding the decays in the param card so that they overwrite P8's internal SUSY model decays, and then let P8 do the (3-body) decays.
+      * I'm able to run with up to 1 extra parton in the matrix element
+      * Got a working job by producing just the stops in the ME. Tried MadSpin but couldn't get it to actually give the correct decays in the end. The thing that works in the end is hard-coding the decays in the param card so that they overwrite P8's internal SUSY model decays, and then let P8 do the (3-body) decays.
 
-Running the container:
-```bash
-docker run --rm -ti -v $PWD:$PWD -w $PWD scailfin/madgraph5-amc-nlo:mg5_amc3.3.1
-```
+      Running the container:
+      ```bash
+      docker run --rm -ti -v $PWD:$PWD -w $PWD scailfin/madgraph5-amc-nlo:mg5_amc3.3.1
+      ```
 
 </details>
 
@@ -91,61 +91,65 @@ CheckMATE is located in `/usr/local/share/checkmate/` and the actual executable 
 
 DV+mu search has CheckMATE code `atlas_2003_11956`.
 
-
-### Notes:
+To start up a docker contain from this image, just run:
 
 ```bash
 docker run --rm -ti -v $PWD:$PWD -w $PWD lawrenceleejr/checkmate:latest
 ```
 
 
-## Misc Notes
+### Notes
 
-```
-root@99d461f91cd0:/Users/leejr/work/DVMuReint# python -V
-Python 2.7.18
-root@99d461f91cd0:/Users/leejr/work/DVMuReint# root-config --prefix --has-minuit2
-/opt/root yes
-root@99d461f91cd0:/Users/leejr/work/DVMuReint# ls /usr/local/share/delphes/delphes/
-```
-
-Building HepMC (instructions from `INSTALL.cmake`):
-
-```bash
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local/share/HepMC-2/ \
-      -Dmomentum:STRING=GEV \
-      -Dlength:STRING=MM \
-      ../HepMC-2.06.11/
-make
-make test
-make install
-```
-
-Building CheckMate:
-
-```bash
-wget https://github.com/CheckMATE2/checkmate2-LLP/archive/refs/tags/LLP.tar.gz
-# This didn't compile. Trying commit 4299900 (which is current HEAD)
-# Also didn't. Trying ed3e43c.
-# Also didn't. Trying 62e1702.
-# Hrm. Got 4299900 to work with a fresh checkout and building with only one proc. make -j1
-tar -xzf LLP.tar.gz
-mv checkmate2-LLP-LLP/ checkmate2-LLP
-mv -T checkmate2-LLP /usr/local/share/checkmate/
-cd /usr/local/share/checkmate/
-
-apt-get install autoconf libtool automake
-autoconf
-automake
-./configure --with-rootsys=/opt/root/ --with-delphes=/usr/local/share/delphes/delphes/ --with-hepmc=/usr/local/share/HepMC-2/
-make
-
-# I then moved everything to /usr/local/share/checkmate and successfully tested the installation with
-
-cd /usr/local/share/checkmate/bin
-./CheckMATE -n example -ev=example_run_cards/auxiliary/testfile.hep -xs="1 fb" -wp8
-
-```
+<details>
+  <summary>Click to expand!</summary>
 
 
+      ```
+      root@99d461f91cd0:/Users/leejr/work/DVMuReint# python -V
+      Python 2.7.18
+      root@99d461f91cd0:/Users/leejr/work/DVMuReint# root-config --prefix --has-minuit2
+      /opt/root yes
+      root@99d461f91cd0:/Users/leejr/work/DVMuReint# ls /usr/local/share/delphes/delphes/
+      ```
+
+      Building HepMC (instructions from `INSTALL.cmake`):
+
+      ```bash
+      cmake -DCMAKE_INSTALL_PREFIX=/usr/local/share/HepMC-2/ \
+            -Dmomentum:STRING=GEV \
+            -Dlength:STRING=MM \
+            ../HepMC-2.06.11/
+      make
+      make test
+      make install
+      ```
+
+      Building CheckMate:
+
+      ```bash
+      wget https://github.com/CheckMATE2/checkmate2-LLP/archive/refs/tags/LLP.tar.gz
+      # This didn't compile. Trying commit 4299900 (which is current HEAD)
+      # Also didn't. Trying ed3e43c.
+      # Also didn't. Trying 62e1702.
+      # Hrm. Got 4299900 to work with a fresh checkout and building with only one proc. make -j1
+      tar -xzf LLP.tar.gz
+      mv checkmate2-LLP-LLP/ checkmate2-LLP
+      mv -T checkmate2-LLP /usr/local/share/checkmate/
+      cd /usr/local/share/checkmate/
+
+      apt-get install autoconf libtool automake
+      autoconf
+      automake
+      ./configure --with-rootsys=/opt/root/ --with-delphes=/usr/local/share/delphes/delphes/ --with-hepmc=/usr/local/share/HepMC-2/
+      make
+
+      # I then moved everything to /usr/local/share/checkmate and successfully tested the installation with
+
+      cd /usr/local/share/checkmate/bin
+      ./CheckMATE -n example -ev=example_run_cards/auxiliary/testfile.hep -xs="1 fb" -wp8
+
+      ```
+
+
+</details>
 
