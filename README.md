@@ -1,6 +1,6 @@
 # DV+mu Reinterpretation Effort
 
-Taylor Sussmane, Karri Folan DiPetrillo, Lawrence Lee
+Taylor Sussmane, Karri Folan Di Petrillo, Lawrence Lee
 
 We are working to take the results of the search [ATLAS SUSY-2018-33 ("DV+mu")](
 https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/SUSY-2018-33/) and reinterpret them for the model shown in Figure 5 of [ATLAS-CONF-2018-003 ("RPC-RPV")](https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/CONFNOTES/ATLAS-CONF-2018-003/). To do this, we'd like to use [CheckMATE](checkmate.hepforge.org) since it already has the DV+mu search implemented in its LLP version.
