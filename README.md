@@ -91,11 +91,25 @@ CheckMATE is located in `/usr/local/share/checkmate/` and the actual executable 
 
 DV+mu search has CheckMATE code `atlas_2003_11956`.
 
-To start up a docker contain from this image, just run:
+To start up a docker contain from this image, I recommend going into the directory of this repository and running:
 
 ```bash
 docker run --rm -ti -v $PWD:$PWD -w $PWD lawrenceleejr/checkmate:latest
 ```
+
+Once in the docker container, you'll have access to the files in this repo. Run the setup script:
+
+```bash
+source setup.sh
+```
+
+which will take care of the fix from that strange linking problem. Then you should be able to run CheckMATE with:
+
+```bash
+/usr/local/share/checkmate/bin/CheckMATE path/to/dat/file
+```
+
+from anywhere. Unfortunately was unable to get vim/emacs loaded into the image, so you can edit the files on the host machine in the shared folder (this repo, if you ran the `docker run` command here), and the changes will appear to the docker session as well.
 
 
 ### Notes
