@@ -1,0 +1,8 @@
+# This is a minimal working example
+[Parameters]
+Name: Sample_2Event
+
+[testprocess]
+XSect: 1 FB
+Events:  /Users/taylorsussmane/CMSresearch/DVMuReint/Sample_2Event.hepmc
+
