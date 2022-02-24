@@ -30,14 +30,29 @@ https://www.dropbox.com/s/uaa91743egy6op4/tag_1_pythia8_events.hepmc.gz?dl=0
   
       Initial MG commands.
 
+      Start container
+      ```
+      docker run --rm -ti -v $PWD:$PWD -w $PWD scailfin/madgraph5-amc-nlo:mg5_amc3.3.1
+      ```
+
       If you haven't done it yet in the docker image, you'll need to download a PDF set:
 
       ```bash
       lhapdf get NNPDF23_lo_as_0130_qed
       ```
 
+      Start MG with
+
+      ```
+      mg5_aMC
+      ```
+
+      Then in there, you can run 
+
       ```madgraph
-      convert model ./RPVMSSM_UFO/RPVMSSM_UFO/
+
+      # (you don't have to do this if you obtained RPVMSSM_UFO from this repo)
+      # convert model ./RPVMSSM_UFO/RPVMSSM_UFO/
 
       import model ./RPVMSSM_UFO/RPVMSSM_UFO/
 
