@@ -1,6 +1,7 @@
 # This is a minimal working example
 [Parameters]
 Name: Sample_2Event
+Analyses: atlas_2003_11956
 
 [testprocess]
 XSect: 1 FB
