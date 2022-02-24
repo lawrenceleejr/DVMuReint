@@ -4,6 +4,6 @@ Name: Sample_2Event
 Analyses: atlas_2003_11956
 
 [testprocess]
-XSect: 1 FB
+XSect: 2.15 PB #cross section for 400 GeV
 Events:  /Users/taylorsussmane/CMSresearch/DVMuReint/Sample_2Event.hepmc
 

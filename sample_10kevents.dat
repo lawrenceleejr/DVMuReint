@@ -4,6 +4,6 @@ Name: Sample_10kEvents
 Analyses: atlas_2003_11956
 
 [testprocess]
-XSect: 1 FB
+XSect: 2.15 PB #cross section for 400 GeV
 Events:  /Users/taylorsussmane/CMSresearch/DVMuReint/tag_1_pythia8_events.hepmc
 
