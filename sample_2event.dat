@@ -1,9 +1,9 @@
 # This is a minimal working example
 [Parameters]
-Name: Sample_10kEvents
+Name: Sample_2Event
 Analyses: atlas_2003_11956
 
 [testprocess]
 XSect: 1 FB
-Events:  /Users/taylorsussmane/CMSresearch/DVMuReint/tag_1_pythia8_events.hepmc
+Events:  /Users/taylorsussmane/CMSresearch/DVMuReint/Sample_2Event.hepmc
 
