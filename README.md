@@ -130,6 +130,8 @@ When compiling CheckMATE, if you get an error that AnalysisBase.h doesn't exist,
 
 ```bash
 mkdir -p /Users/leejr/work/DVMuReint
+```
+```bash
 ln -s /usr/local/share/checkmate /Users/leejr/work/DVMuReint/Checkmate
 ```
 
