@@ -126,6 +126,13 @@ which will take care of the fix from that strange linking problem. Then you shou
 
 from anywhere. Unfortunately was unable to get vim/emacs loaded into the image, so you can edit the files on the host machine in the shared folder (this repo, if you ran the `docker run` command here), and the changes will appear to the docker session as well.
 
+When compiling CheckMATE, if you get an error that AnalysisBase.h doesn't exist, it's because it's pointing to a file on Dr. Lee's local computer. Run the following commands:
+
+```bash
+mkdir -p /Users/leejr/work/DVMuReint
+ln -s /usr/local/share/checkmate /Users/leejr/work/DVMuReint/Checkmate
+```
+
 
 ### Notes
 
