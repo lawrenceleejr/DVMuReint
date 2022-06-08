@@ -1,7 +1,5 @@
 #include "atlas_2003_11956.h"
 #include <cmath>
-#include <Math/GenVector/Cartesian2D.h>
-#include <Math/VectorUtil.h>
 // AUTHOR: K. Rolbiecki
 //  EMAIL: krolb@fuw.edu.pl
 void Atlas_2003_11956::initialize() {
@@ -52,7 +50,7 @@ void Atlas_2003_11956::finalize() {
 }       
 
 void Atlas_2003_11956::selection(int muons_count, double muon_ptmin, double muon_etamax, std::string sr) {
-  countCutflowEvent(sr+"_02_MET");
+	countCutflowEvent(sr+"_02_MET");
   
   if (muons_count == 0 ) return;
   countCutflowEvent(sr+"_03_muon");
@@ -75,21 +73,22 @@ void Atlas_2003_11956::selection(int muons_count, double muon_ptmin, double muon
   
   std::vector<GenParticle*> displaced_muons;
   bool d0_check = false;
-  bool z0_check = false;
+  bool z0_check = true;
   for (int i = 0; i < selected_muons.size(); ++i) {
 	  TVector2 rVec = TVector2(selected_muons[i]->X, selected_muons[i]->Y);
 	  TVector2 pVec = TVector2(selected_muons[i]->Px, selected_muons[i]->Py);
     double r_decay = rVec.Mod();
     double deltaPhi = rVec.DeltaPhi(pVec);
-    double d0 = r_decay*deltaPhi;
+    double d0 = r_decay*sin(deltaPhi);
+    cout << d0 << " ts\n";
 //double dZ = selected_muons[i]->Z - ((selected_muons[i]->Px* selected_muons[i]->Y -  selected_muons[i]->Py* selected_muons[i]->X)/ selected_muons[i]->PT) * selected_muons[i]->Pz/ selected_muons[i]->PT;
-    if (fabs(d0) > 2. and fabs(d0) < 300.) {
+    if (fabs(d0) > .2 and fabs(d0) < 30) {
           d0_check = true;
 	 // if (fabs(dZ) < 500.) {
            //   z0_check = true;
 
-             // displaced_muons.push_back(selected_muons[i]);
-              //cout << "Muon " << i << "   " << selected_muons[i]->X << "    " << selected_muons[i]->Y << "    " << selected_muons[i]->Z << "\n";
+             displaced_muons.push_back(selected_muons[i]);
+              cout << "Muon " << i << "   " << selected_muons[i]->X << "    " << selected_muons[i]->Y << "    " << selected_muons[i]->Z << "\n";
          // }
       }
       
@@ -282,6 +281,7 @@ std::vector< DVertex > Atlas_2003_11956::DVfinder(double d0min, double ptmin, do
 
     std::vector<GenParticle*> Atlas_2003_11956::Isolate_truemuons_with_inverse_track_isolation_cone(std::vector<GenParticle*> leptons,std::vector<Track*> tracks,std::vector<Tower*> towers,double dR_track_max,double pT_for_inverse_function_track,double dR_tower,double pT_amount_track,double pT_amount_tower,bool checkTower){
       std::vector<GenParticle*> filtered_leptons;
+      cout << "leptons.size(): " << leptons.size() << endl;
       for(int i=0;i<leptons.size();i++){
         double dR_track=0;
         double sumPT=0;
@@ -296,33 +296,46 @@ std::vector< DVertex > Atlas_2003_11956::DVfinder(double d0min, double ptmin, do
 	  // Ignore the lepton's track itself
           if(neighbour->Particle == leptons[i])
             continue;
+
           if (neighbour->P4().DeltaR(leptons[i]->P4()) > dR_track)
             continue;
+
           sumPT += neighbour->PT;
         }
+	cout <<"sumPT: " << sumPT << endl;
         if((leptons[i]->PT)*pT_amount_track<=sumPT){
           continue;
         }
-        if(checkTower){
+	cout << "(leptons[i]->PT)*pT_amount_track" << (leptons[i]->PT)*pT_amount_track << endl;
+        cout << "checkTower: " << checkTower << endl;
+	if(checkTower){
+		cout << "towers.size()" <<towers.size() << endl;
           for (int t = 0; t < towers.size(); t++) {
             Tower* neighbour = towers[t];
-	    
+	    bool a = neighbour->ET < 0.00001 || neighbour->P4().DeltaR(leptons[i]->P4()) > dR_tower;
+	    cout << "bool value of tower momentum and dR check: " << a << endl;
             // check tower has 'some' momentum and check dR
             if (neighbour->ET < 0.00001 || neighbour->P4().DeltaR(leptons[i]->P4()) > dR_tower)
               continue;
             // Ignore the lepton's tower
             bool candidatesTower = false;//This testing is different from the testing in the tracks case, because to one track there corresponds one particle, but for one tower there is not only one particle.
+	    cout << "neighbour->Particles.GetEntries(): " << neighbour->Particles.GetEntries() << endl;
             for(int p = 0; p < neighbour->Particles.GetEntries(); p++){
+		bool b = neighbour->Particles.At(p) == leptons[i];
+		cout << "if particles at index == leptons[i]: " << b << endl;
               if (neighbour->Particles.At(p) == leptons[i]) {
                 // break the loop and ignore the tower
                 candidatesTower = true;
                 break;
               }
             }
+	    cout << "candidatesTower: " << candidatesTower << endl;
             if (candidatesTower)
               continue;
             sumET += neighbour->ET;
+		cout << "sumET: " << sumET << endl;
           }
+	  cout << "(leptons[i]->PT)*pT_amount_tower: " << (leptons[i]->PT)*pT_amount_tower << endl;
           if((leptons[i]->PT)*pT_amount_tower<=sumET){
             continue;
           }
