@@ -32,7 +32,6 @@ def isCharged(particle):
 	if part.charge != 0: return 1
 	else: return 0
 
-#refPos is the end vertex of neutralino
 def get_reconstructable_children(particle, refPos):
 	reconstructables = []
 	for child in particle.children:
@@ -69,8 +68,12 @@ for i in range(10):
 			#add in LLP treatment
 		if iparticle.pid == 1000022 and not iparticle.end_vertex.position: #first neutralino's end vertex is (0,0,0,0)? and that's messing up the following code, so I put the not part? seemed to work, so I assume that means null 
 			#print(dir(iparticle))
+
+			#proper decay time of neutralino
 			decaytime.append(iparticle.end_vertex.position[3])
 			properdecaytime.append(iparticle.end_vertex.position[3]/(iparticle.momentum.e/iparticle.momentum.m()))
+
+			#vertex-level acceptance
 			selectedDecayProds = []
 			sumSelDecayProds = ROOT.TLorentzVector()
 			for ipart in get_reconstructable_children(iparticle, iparticle.end_vertex.position):
@@ -88,8 +91,10 @@ for i in range(10):
 			InvMass = sumSelDecayProds.M()
 
 			if transverseDistance > 4 and transverseDistance < 300 and abs(iparticle.end_vertex.position[2]) < 300 and numSelDecay >= 3 and InvMass > 20000:
-				passedVertexAcc = True 
+				passedVertexAcc = True
+ 
 		if iparticle.pid == 13:
+			#muon event level acceptance
 			rx = iparticle.production_vertex.position[0]
 			ry = iparticle.production_vertex.position[1]
 			rvec = ROOT.TVector2(rx, ry)
@@ -98,6 +103,8 @@ for i in range(10):
 			d0 = r_decay*np.sin(rvec.DeltaPhi(pvec))
 			if iparticle.momentum.pt() > 62 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 1.05:
 				muonEvtAcc.append(iparticle)
+
+			#muon level acceptance
 			if iparticle.momentum.pt() > 25 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 2.5:
 				muonAcc.append(iparticle)
 		
