@@ -1,0 +1,10 @@
+1       d d~ > t1 t1~
+mirror  d~ d > t1 t1~
+2       s s~ > t1 t1~
+mirror  s~ s > t1 t1~
+3       d s~ > t1 t1~
+mirror  s~ d > t1 t1~
+4       s d~ > t1 t1~
+mirror  d~ s > t1 t1~
+5       u u~ > t1 t1~,c c~ > t1 t1~
+mirror  u~ u > t1 t1~,c~ c > t1 t1~
