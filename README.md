@@ -71,6 +71,8 @@ https://www.dropbox.com/s/uaa91743egy6op4/tag_1_pythia8_events.hepmc.gz?dl=0
       # We have to edit the parameter card to force these decays to happen. 
       # ** There is a template param card in this repo under Cards/ Use it to get the decays right. **
       # This decay table gets handed to pythia for the decay of the N1
+      
+      # MAKE SURE to link the TWO cards in this repo into your cards directory. We need these params!
 
       ```
 
