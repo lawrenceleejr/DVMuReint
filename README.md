@@ -68,27 +68,11 @@ https://www.dropbox.com/s/uaa91743egy6op4/tag_1_pythia8_events.hepmc.gz?dl=0
 
       lhapdf get NNPDF23_lo_as_0130_qed # this is needed at ther terminal
 
-      decay t1 > t n1, (n1 > t b s)
-      decay t1~ > t~ n1, (n1 > t b s)
+      # We have to edit the parameter card to force these decays to happen. 
+      # ** There is a template param card in this repo under Cards/ Use it to get the decays right. **
+      # This decay table gets handed to pythia for the decay of the N1
 
       ```
-
-      madspin card:
-      ```
-      set max_weight_ps_point 400  # number of PS to estimate the maximum for each event
-      decay t1 > t n1
-      decay t1~ > t~ n1
-      decay n1 > t b s
-      decay t > w+ b, w+ > all all
-      decay t~ > w- b~, w- > all all
-      decay w+ > all all
-      decay w- > all all
-      decay z > all all
-      launch
-      ```
-
-      * I'm able to run with up to 1 extra parton in the matrix element
-      * Got a working job by producing just the stops in the ME. Tried MadSpin but couldn't get it to actually give the correct decays in the end. The thing that works in the end is hard-coding the decays in the param card so that they overwrite P8's internal SUSY model decays, and then let P8 do the (3-body) decays.
 
       Running the container:
       ```bash
