@@ -93,11 +93,12 @@ h["Reconstructables"] = ROOT.TH1F("Reconstructable Decay Products", "Reconstruct
 h["Selected decay prods"] = ROOT.TH1F("Selected Decay Products", "Selected decay prods; num selected decay prods; events", 50, 0, 100)
 h["decay products"] = ROOT.TH1F("Decay products", "decay products; num decay products; events", 50, 0, 100)
 h["proper decay time"] = ROOT.TH1F("proper decay time", "proper decay Time; decay time (mm); events", 50, 0, 30)
+h["cut-flow"] = ROOT.TH1F("cut-flow", "cut-flow; cuts; events", 4, 0, 4)
 
 passingEvents = 0
 
 #event loop
-for i in range(100):
+for i in range(1000):
 	adapter.read_event(evt)
 	if i%100 == 0 and i > 0:	
 		print(i)
@@ -198,7 +199,6 @@ for i in range(100):
 		MuEvtEff = MuEvtLvlHist.GetBinContent(MuEvtLvlHist.FindBin(min(d0_array), sumInvisible.Pt()/1000.))
 		randomNum = random.rand()
 		if randomNum <= MuEvtEff: evtPassedMuEff = True
-
 	if len(muonAcc) > 0:
 		passedMuAcc = True
 
@@ -228,9 +228,17 @@ for i in range(100):
 	#P_muon_DV = P_DV_attached + P_DV_unattached - P_DV_att_unatt
 	#P_METSR = METacc*truthMETefficiency*P_muon_DV
 	#P_muonSR = #muon evt lvl acc * muon evt eff?
+	h["cut-flow"].Fill(0)
 	
-	if len(vertexArr) > 0 and len(muonArr) > 0: evtHasDVandMuon = True
+	if len(vertexArr) > 0 and len(muonArr) > 0: 
+		evtHasDVandMuon = True
 	
+	if evtHasDVandMuon: 
+		h["cut-flow"].Fill(1)
+	if evtPassedMETeff: 
+		h["cut-flow"].Fill(2)
+	if evtPassedMuEff: h["cut-flow"].Fill(3)
+
 	if evtHasDVandMuon and evtPassedMETeff and evtPassedMuEff:
 		passingEvents += 1
 
@@ -259,6 +267,10 @@ C4.SaveAs("decay_products.pdf")
 C5 = ROOT.TCanvas("C5", "", 600, 600)
 h["proper decay time"].Draw()
 C5.SaveAs("rawproperdecaytime.pdf")
+
+C6 = ROOT.TCanvas("C6", "", 600, 600)
+h["cut-flow"].Draw()
+C6.SaveAs("cutFlow.pdf")
 outputFile.Close()
 
 bins = np.linspace(0, 3., 31)
