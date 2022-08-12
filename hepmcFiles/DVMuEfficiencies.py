@@ -6,6 +6,7 @@ import ROOT
 ROOT.gROOT.SetBatch()
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy import random
 from scipy.optimize import curve_fit
 from particle import Particle
 
@@ -169,7 +170,7 @@ for i in range(100):
 					randomNum = random.rand()
 					if randomNum <= MuonVertexEff:
 						vertexArr.append(iparticle.end_vertex.position)	
- 				else:
+				else:
 					NoMuonVertexEff = VertexLvlhist.GetBinContent(VertexLvlhist.FindBin(transverseDistance))
 					randomNum = random.rand()
 					if randomNum <= NoMuonVertexEff:
