@@ -96,9 +96,10 @@ h["proper decay time"] = ROOT.TH1F("proper decay time", "proper decay Time; deca
 h["cut-flow"] = ROOT.TH1F("cut-flow", "cut-flow; cuts; events", 4, 0, 4)
 
 passingEvents = 0
+numEvents = 1000
 
 #event loop
-for i in range(1000):
+for i in range(numEvents):
 	adapter.read_event(evt)
 	if i%100 == 0 and i > 0:	
 		print(i)
@@ -170,7 +171,7 @@ for i in range(1000):
 					MuonVertexEff = VertexLvlMuonhist.GetBinContent(VertexLvlMuonhist.FindBin(transverseDistance))
 					randomNum = random.rand()
 					if randomNum <= MuonVertexEff:
-						vertexArr.append(iparticle.end_vertex.position)	
+						vertexArr.append(iparticle.end_vertex.position)
 				else:
 					NoMuonVertexEff = VertexLvlhist.GetBinContent(VertexLvlhist.FindBin(transverseDistance))
 					randomNum = random.rand()
@@ -179,8 +180,6 @@ for i in range(1000):
 
 		if iparticle.pid == 13:
 			#muon event level acceptance
-		#find min d0 for muevtlvl which is the smallest d0 that a muon that passes this criteria has
-			#does it mean smallest absolute value or smallest?
 			d0 = get_d0(iparticle)
 			if iparticle.momentum.pt() > 62000 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 1.05:
 				muonEvtAcc.append(iparticle)
@@ -190,9 +189,10 @@ for i in range(1000):
 			#muon level acceptance
 			if iparticle.momentum.pt() > 25000 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 2.5:
 				muonAcc.append(iparticle)
-				MuEff = MuLvlhist.GetBinContent(MuLvlhist.FindBin(abs(d0), iparticle.momentum.pt()))
+				MuEff = MuLvlhist.GetBinContent(MuLvlhist.FindBin(abs(d0), iparticle.momentum.pt()/1000.))
 				randomNum = random.rand()
-				if randomNum <= MuEff: muonArr.append(iparticle)
+				if randomNum <= MuEff: 
+					muonArr.append(iparticle)
 
 	if len(muonEvtAcc) > 0:
 		passedMuEvtAcc = True
@@ -217,30 +217,23 @@ for i in range(1000):
 
 	h["MET"].Fill(sumInvisible.Pt()/1000.)
 	
-	#probability calculations
-	#P_DV_att_unatt = 
-	#P_DV_unattached = 1 - math.prod(1 - vertexAcc*vertexEff*(1 - math.prod(1 - MuAcc*muonlvlEff)))
-		#second prod is over unattached muons
-	#P_DV_attached = 1 - math.prod(1-vertexAcc*vertexWithMuonEff*(1 - math.prod(1-MuAcc*muonlvlEff)))
-		#second prod is over attached muons
-#make list of unattached and attached muons' acceptances and efficiencies and then do product over them
-#what is exact value of muonAcc? it never said how to calculate it only how to know if a muon passed
-	#P_muon_DV = P_DV_attached + P_DV_unattached - P_DV_att_unatt
-	#P_METSR = METacc*truthMETefficiency*P_muon_DV
-	#P_muonSR = #muon evt lvl acc * muon evt eff?
 	h["cut-flow"].Fill(0)
 	
 	if len(vertexArr) > 0 and len(muonArr) > 0: 
 		evtHasDVandMuon = True
 	
-	if evtHasDVandMuon: 
-		h["cut-flow"].Fill(1)
 	if evtPassedMETeff: 
-		h["cut-flow"].Fill(2)
-	if evtPassedMuEff: h["cut-flow"].Fill(3)
+		h["cut-flow"].Fill(1)
+		if evtHasDVandMuon: 
+			h["cut-flow"].Fill(2)
+			if evtPassedMuEff: h["cut-flow"].Fill(3)
 
 	if evtHasDVandMuon and evtPassedMETeff and evtPassedMuEff:
 		passingEvents += 1
+		print(passingEvents)
+	
+probability = passingEvents/numEvents
+print(probability)
 
 C = ROOT.TCanvas("C", "", 600, 600)
 h["MET"].Draw()
@@ -278,7 +271,7 @@ data_entries, bins = np.histogram(properdecaytime, bins=bins)
 
 binscenters = np.array([0.5 * (bins[i] + bins[i+1]) for i in range(len(bins)-1)])
 popt, pcov = curve_fit(fit_function, xdata=binscenters[2:], ydata=data_entries[2:], p0=[2500, 0.3])
-print(popt)
+#print(popt)
 xspace = np.linspace(0, 3., 100000)
 
 fig = plt.figure()
