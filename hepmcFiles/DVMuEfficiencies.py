@@ -32,8 +32,20 @@ VertexLvlMuonhist = VertexLvlMuonfile.Get("Auxiliary Figure 10b/Hist1D_y1")
 
 adapter = pyhepmc_ng.ReaderAsciiHepMC2(filename=str(sys.argv[1]))
 
-evt = pyhepmc_ng.GenEvent(
-    momentum_unit=pyhepmc_ng.Units.MEV, length_unit=pyhepmc_ng.Units.MM)
+fileName = str(sys.argv[1])
+seperatedStrings = fileName.split('_')
+stringList = []
+for i in range(len(seperatedStrings)):
+	string = ""
+	for j in seperatedStrings[i]:
+		if j.isdigit(): 
+			string += j
+	stringList.append(string)
+stopMass = int(stringList[1])*1000 #GeV
+neutralinoMass = int(stringList[2]) #GeV
+neutralinoLifetime = int(stringList[3]) #ps
+
+evt = pyhepmc_ng.GenEvent(momentum_unit=pyhepmc_ng.Units.MEV, length_unit=pyhepmc_ng.Units.MM)
 
 decaytime = []
 properdecaytime = []
@@ -84,7 +96,10 @@ def get_d0(particle):
 	return d0
 
 #Instantiating histogram objects
+cutflowName = "cutflow_" + str(stopMass) + "GeV_" + str(neutralinoLifetime) + "ps"
+print(cutflowName)
 outputFile = ROOT.TFile("output.root","RECREATE")
+histogramFile = ROOT.TFile("cutflowFiles/%s.root"%cutflowName, "RECREATE") #put directory/ in front of filename so it outputs into directory of cut-flow files
 h = {}
 h = {}
 h["MET"] = ROOT.TH1F("MET", "MET; MET [GeV]; events", 50, 0, 1000)
@@ -93,10 +108,11 @@ h["Reconstructables"] = ROOT.TH1F("Reconstructable Decay Products", "Reconstruct
 h["Selected decay prods"] = ROOT.TH1F("Selected Decay Products", "Selected decay prods; num selected decay prods; events", 50, 0, 100)
 h["decay products"] = ROOT.TH1F("Decay products", "decay products; num decay products; events", 50, 0, 100)
 h["proper decay time"] = ROOT.TH1F("proper decay time", "proper decay Time; decay time (mm); events", 50, 0, 30)
-h["cut-flow"] = ROOT.TH1F("cut-flow", "cut-flow; cuts; events", 4, 0, 4)
+h["MET cut-flow"] = ROOT.TH1F("MET cut-flow", "MET cut-flow; cuts; events", 4, 0, 4)
+h["Muon cut-flow"] = ROOT.TH1F("Muon cut-flow", "Muon cut-flow; cuts; events", 4, 0, 4)
 
 passingEvents = 0
-numEvents = 1000
+numEvents = 100
 
 #event loop
 for i in range(numEvents):
@@ -114,7 +130,6 @@ for i in range(numEvents):
 	hasAttachedMuon = False
 	vertexArr = []
 	muonArr = []
-	evtHasDVandMuon = False
 	evtPassedMETeff = False
 	evtPassedMuEff = False
 
@@ -217,24 +232,30 @@ for i in range(numEvents):
 
 	h["MET"].Fill(sumInvisible.Pt()/1000.)
 	
-	h["cut-flow"].Fill(0)
-	
-	if len(vertexArr) > 0 and len(muonArr) > 0: 
-		evtHasDVandMuon = True
+	h["MET cut-flow"].Fill(0)
+	h["Muon cut-flow"].Fill(0)
 	
 	if evtPassedMETeff: 
-		h["cut-flow"].Fill(1)
-		if evtHasDVandMuon: 
-			h["cut-flow"].Fill(2)
-			if evtPassedMuEff: h["cut-flow"].Fill(3)
-
-	if evtHasDVandMuon and evtPassedMETeff and evtPassedMuEff:
-		passingEvents += 1
-		print(passingEvents)
+		h["MET cut-flow"].Fill(1)
+	if evtPassedMuEff:
+		h["Muon cut-flow"].Fill(1)
+	if len(vertexArr) == 0:
+		continue 
+	h["MET cut-flow"].Fill(2)
+	h["Muon cut-flow"].Fill(2)
+	if len(muonArr) == 0:
+		continue
+	h["MET cut-flow"].Fill(3)
+	h["Muon cut-flow"].Fill(3)
+	#store histogram in root file and use a different script to get the number of events in this last bin
+	#take this number of events and multiply it by (luminosity*cross section)/number of events in first bin
+		#compare this number to the one in the table to see if it's excluded
+	#luminosity is from the paper (136 fb^-1)
+	#cross section is from the SUSY cross section twiki for stops (function of stop mass)
+		#use the look up table and gitHub link to find the cross section
+	#output masses and lifetime and num events and output of calculation above in table
+	#if 3 is filled, then you've gotten through to MET signal region
 	
-probability = passingEvents/numEvents
-print(probability)
-
 C = ROOT.TCanvas("C", "", 600, 600)
 h["MET"].Draw()
 C.SaveAs("MET.pdf")
@@ -262,9 +283,17 @@ h["proper decay time"].Draw()
 C5.SaveAs("rawproperdecaytime.pdf")
 
 C6 = ROOT.TCanvas("C6", "", 600, 600)
-h["cut-flow"].Draw()
-C6.SaveAs("cutFlow.pdf")
+h["MET cut-flow"].Draw()
+C6.SaveAs("METcutFlow.pdf")
+
+C7 = ROOT.TCanvas("C7", "", 600, 600)
+h["Muon cut-flow"].Draw()
+C7.SaveAs("MuonCutFlow.pdf")
 outputFile.Close()
+
+histogramFile.WriteObject(h["MET cut-flow"], "MET cut-flow")
+histogramFile.WriteObject(h["Muon cut-flow"], "Muon cut-flow")
+histogramFile.Close()
 
 bins = np.linspace(0, 3., 31)
 data_entries, bins = np.histogram(properdecaytime, bins=bins)
