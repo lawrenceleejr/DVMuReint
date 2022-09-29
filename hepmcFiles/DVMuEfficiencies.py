@@ -101,8 +101,10 @@ print(cutflowName)
 outputFile = ROOT.TFile("output.root","RECREATE")
 histogramFile = ROOT.TFile("cutflowFiles/%s.root"%cutflowName, "RECREATE") #put directory/ in front of filename so it outputs into directory of cut-flow files
 h = {}
-h = {}
-h["MET"] = ROOT.TH1F("MET", "MET; MET [GeV]; events", 50, 0, 1000)
+h["MET"] = ROOT.TH1F("MET", "MET; MET [GeV]; events", 10, 0, 1000)
+# h["MET_Cut1"] = ROOT.TH1F("MET Cut1", "MET; MET [GeV]; events", 10, 0, 1000)
+# h["MET_Cut2"] = ROOT.TH1F("MET Cut2", "MET; MET [GeV]; events", 10, 0, 1000)
+# h["MET_Cut3"] = ROOT.TH1F("MET Cut3", "MET; MET [GeV]; events", 10, 0, 1000)
 h["METacceptance"] = ROOT.TH1F("METacceptance", "MET acceptance; MET [GeV]; events", 50, 0, 1000)
 h["Reconstructables"] = ROOT.TH1F("Reconstructable Decay Products", "Reconstructables; Number reconstructables; events", 50, 0, 100)
 h["Selected decay prods"] = ROOT.TH1F("Selected Decay Products", "Selected decay prods; num selected decay prods; events", 50, 0, 100)
@@ -110,6 +112,46 @@ h["decay products"] = ROOT.TH1F("Decay products", "decay products; num decay pro
 h["proper decay time"] = ROOT.TH1F("proper decay time", "proper decay Time; decay time (mm); events", 50, 0, 30)
 h["MET cut-flow"] = ROOT.TH1F("MET cut-flow", "MET cut-flow; cuts; events", 4, 0, 4)
 h["Muon cut-flow"] = ROOT.TH1F("Muon cut-flow", "Muon cut-flow; cuts; events", 4, 0, 4)
+
+
+# cutlist = ["cut0","cut1","cut2","cut3"]
+ncuts = 4
+distributionsAtCuts = {}
+distributionsAtCuts["SRMET MET"] = {}
+distributionsAtCuts["SRMET ntrk"] = {}
+distributionsAtCuts["SRMET mvtx"] = {}
+distributionsAtCuts["SRMET maxd0"] = {}
+distributionsAtCuts["SRMET rxy"] = {}
+distributionsAtCuts["SRMU mupt"] = {}
+
+distributionsAtCuts["SRMET mvtx ntrk"] = {}
+distributionsAtCuts["SRMET MET mupt"] = {}
+
+
+for icut in range(ncuts):
+	distributionsAtCuts["SRMET MET"][icut] = ROOT.TH1F(f"SRMET MET {icut}", "; MET [GeV]; events", 10, 0, 1000)
+	distributionsAtCuts["SRMET ntrk"][icut] = ROOT.TH1F(f"SRMET ntrk {icut}", "; ntrk; events", 50, 0, 50)
+	distributionsAtCuts["SRMET mvtx"][icut] = ROOT.TH1F(f"SRMET mvtx {icut}", "; mvtx; events", 20, 0, 100)
+	distributionsAtCuts["SRMET mvtx ntrk"][icut] = ROOT.TH2F(f"SRMET mvtx ntrk {icut}", "; mvtx; ntrk", 20, 0, 100, 50, 0, 50)
+	distributionsAtCuts["SRMET MET mupt"][icut] = ROOT.TH2F(f"SRMET MET mupt {icut}", "; MET; mupt", 10, 0, 1000, 10, 0, 600)
+	distributionsAtCuts["SRMET maxd0"][icut] = ROOT.TH1F(f"SRMET maxd0 {icut}", "; maxd0; events", 50, 0, 100)
+	distributionsAtCuts["SRMET rxy"][icut] = ROOT.TH1F(f"SRMET rxy {icut}", "; rxy; events", 50, 0, 150)
+	distributionsAtCuts["SRMU mupt"][icut] = ROOT.TH1F(f"SRMU mupt {icut}", ";mu pT [GeV]; events", 10, 0, 600)
+
+def fillDistributionsAtCuts(varname, value, passCutBoolList ):
+	for icut,passCut in enumerate(passCutBoolList):
+		if passCut:
+			distributionsAtCuts[varname][icut].Fill(value)
+		else:
+			break
+
+
+def fillDistributionsAtCuts2D(varname, value1, value2, passCutBoolList ):
+	for icut,passCut in enumerate(passCutBoolList):
+		if passCut:
+			distributionsAtCuts[varname][icut].Fill(value1, value2)
+		else:
+			break
 
 passingEvents = 0
 numEvents = 1000
@@ -132,6 +174,8 @@ for i in range(numEvents):
 	muonArr = []
 	evtPassedMETeff = False
 	evtPassedMuEff = False
+
+	maxMuonPt = 0
 
 	#particle loop
 	for iparticle in evt.particles:
@@ -162,6 +206,7 @@ for i in range(numEvents):
 			#
 
 			#finding selected decay products
+			maxd0 = 0
 			for ipart in get_reconstructable_children(iparticle, iparticle.end_vertex.position):
 				if getCharge(ipart) != 0 and ipart.momentum.pt()/abs(getCharge(ipart)) > 1000:
 					selectedDecayProds.append(ipart)
@@ -171,6 +216,8 @@ for i in range(numEvents):
 					sumSelDecayProds += ipart_momentum
 				if ipart.pid == 13 and iparticle.momentum.pt() > 25000 and abs(get_d0(ipart)) > 2 and abs(get_d0(ipart)) < 300 and iparticle.momentum.abs_eta() < 2.5:
 					hasAttachedMuon = True
+				if abs(get_d0(ipart))>maxd0:
+					maxd0 = abs(get_d0(ipart))
 
 			endvertex_x = iparticle.end_vertex.position[0]
 			endvertex_y = iparticle.end_vertex.position[1]
@@ -209,6 +256,10 @@ for i in range(numEvents):
 				if randomNum <= MuEff:
 					muonArr.append(iparticle)
 
+	for imuon in muonEvtAcc:
+		if imuon.momentum.pt()>maxMuonPt:
+			maxMuonPt=imuon.momentum.pt()
+
 	if len(muonEvtAcc) > 0:
 		passedMuEvtAcc = True
 		MuEvtEff = MuEvtLvlHist.GetBinContent(MuEvtLvlHist.FindBin(min(d0_array), sumInvisible.Pt()/1000.))
@@ -235,13 +286,28 @@ for i in range(numEvents):
 	h["MET cut-flow"].Fill(0)
 	h["Muon cut-flow"].Fill(0)
 
+
 	if evtPassedMETeff:
 		h["MET cut-flow"].Fill(1)
+		# h["MET_Cut1"].Fill(sumInvisible.Pt()/1000.)
 		if len(vertexArr):
 			h["MET cut-flow"].Fill(2)
+			# h["MET_Cut2"].Fill(sumInvisible.Pt()/1000.)
 			if len(muonArr):
 				h["MET cut-flow"].Fill(3)
 				# passed MET SR
+				# h["MET_Cut3"].Fill(sumInvisible.Pt()/1000.)
+
+	SRMETCutFlowBools = [True,evtPassedMETeff, len(vertexArr), len(muonArr)]
+	fillDistributionsAtCuts("SRMET MET", sumInvisible.Pt()/1000., SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET ntrk", numSelDecay, SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET mvtx", InvMass/1000., SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET maxd0", maxd0, SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET rxy", transverseDistance, SRMETCutFlowBools)
+
+	fillDistributionsAtCuts2D("SRMET mvtx ntrk", InvMass/1000., numSelDecay, SRMETCutFlowBools)
+	fillDistributionsAtCuts2D("SRMET MET mupt", sumInvisible.Pt()/1000., maxMuonPt/1000., SRMETCutFlowBools)
+
 
 	if evtPassedMuEff:
 		h["Muon cut-flow"].Fill(1)
@@ -250,6 +316,9 @@ for i in range(numEvents):
 			if len(muonArr):
 				h["Muon cut-flow"].Fill(3)
 				# passed mu SR
+
+	SRMUCutFlowBools = [True,evtPassedMuEff, len(vertexArr), len(muonArr)]
+	fillDistributionsAtCuts("SRMU mupt", maxMuonPt/1000., SRMUCutFlowBools)
 
 
 	#store histogram in root file and use a different script to get the number of events in this last bin
@@ -295,6 +364,14 @@ C7 = ROOT.TCanvas("C7", "", 600, 600)
 h["Muon cut-flow"].Draw()
 C7.SaveAs("MuonCutFlow.pdf")
 outputFile.Close()
+
+
+for key in h:
+	h[key].Write()
+
+for key in distributionsAtCuts:
+	for subkey in distributionsAtCuts[key]:
+		distributionsAtCuts[key][subkey].Write()
 
 histogramFile.WriteObject(h["MET cut-flow"], "MET cut-flow")
 histogramFile.WriteObject(h["Muon cut-flow"], "Muon cut-flow")
