@@ -38,7 +38,7 @@ stringList = []
 for i in range(len(seperatedStrings)):
 	string = ""
 	for j in seperatedStrings[i]:
-		if j.isdigit(): 
+		if j.isdigit():
 			string += j
 	stringList.append(string)
 stopMass = int(stringList[1]) #GeV
@@ -81,7 +81,7 @@ def get_reconstructable_children(particle, refPos):
 		if decayDist_3D > 1:
 			if decayDist_3D > 100:
 				reconstructables.add(child)
-		else: 
+		else:
 			reconstructables = reconstructables.union(set(get_reconstructable_children(child, refPos)))
 	reconstructables = list(reconstructables)
 	return reconstructables
@@ -89,7 +89,7 @@ def get_reconstructable_children(particle, refPos):
 def get_d0(particle):
 	rx = particle.production_vertex.position[0]
 	ry = particle.production_vertex.position[1]
-	rvec = ROOT.TVector2(rx, ry) 
+	rvec = ROOT.TVector2(rx, ry)
 	r_decay = rvec.Mod()
 	pvec = ROOT.TVector2(particle.momentum.px, particle.momentum.py)
 	d0 = r_decay*np.sin(rvec.DeltaPhi(pvec))
@@ -117,7 +117,7 @@ numEvents = 1000
 #event loop
 for i in range(numEvents):
 	adapter.read_event(evt)
-	if i%100 == 0 and i > 0:	
+	if i%100 == 0 and i > 0:
 		print(i)
 
 	sumInvisible = ROOT.TLorentzVector()
@@ -141,12 +141,12 @@ for i in range(numEvents):
 			sumInvisible += p
 			#add in LLP treatment
 
-		if iparticle.pid == 1000022 and iparticle.end_vertex is not None: 
+		if iparticle.pid == 1000022 and iparticle.end_vertex is not None:
 			#print(dir(iparticle))
 
 			numdecayprod = len(iparticle.children)
-			h["decay products"].Fill(numdecayprod)	
-			
+			h["decay products"].Fill(numdecayprod)
+
 			#proper decay time of neutralino
 			decaytime.append(iparticle.end_vertex.position[3])
 			properdecaytime.append(iparticle.end_vertex.position[3]/(iparticle.momentum.e/iparticle.momentum.m()))
@@ -155,12 +155,12 @@ for i in range(numEvents):
 			#vertex-level acceptance
 			selectedDecayProds = []
 			sumSelDecayProds = ROOT.TLorentzVector()
-			
+
 			#
 			numReconstructables = len(get_reconstructable_children(iparticle, iparticle.end_vertex.position))
 			h["Reconstructables"].Fill(numReconstructables)
 			#
- 
+
 			#finding selected decay products
 			for ipart in get_reconstructable_children(iparticle, iparticle.end_vertex.position):
 				if getCharge(ipart) != 0 and ipart.momentum.pt()/abs(getCharge(ipart)) > 1000:
@@ -177,7 +177,7 @@ for i in range(numEvents):
 			transverseDistance = np.sqrt(endvertex_x**2 + endvertex_y**2)
 			numSelDecay = len(selectedDecayProds)
 			InvMass = sumSelDecayProds.M()
-			
+
 			h["Selected decay prods"].Fill(numSelDecay)
 
 			if transverseDistance > 4 and transverseDistance < 300 and abs(iparticle.end_vertex.position[2]) < 300 and numSelDecay >= 3 and InvMass > 20000:
@@ -199,14 +199,14 @@ for i in range(numEvents):
 			if iparticle.momentum.pt() > 62000 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 1.05:
 				muonEvtAcc.append(iparticle)
 				d0_array.append(abs(d0))
-				
+
 
 			#muon level acceptance
 			if iparticle.momentum.pt() > 25000 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 2.5:
 				muonAcc.append(iparticle)
 				MuEff = MuLvlhist.GetBinContent(MuLvlhist.FindBin(abs(d0), iparticle.momentum.pt()/1000.))
 				randomNum = random.rand()
-				if randomNum <= MuEff: 
+				if randomNum <= MuEff:
 					muonArr.append(iparticle)
 
 	if len(muonEvtAcc) > 0:
@@ -219,34 +219,39 @@ for i in range(numEvents):
 
 	MET.append(sumInvisible.Pt())
 
-	if sumInvisible.Pt() > 100000: 
+	if sumInvisible.Pt() > 100000:
 		METacceptance.append(sumInvisible.Pt())
 		h["METacceptance"].Fill(sumInvisible.Pt()/1000.)
 		truthMETefficiency = truthMEThist.GetBinContent(truthMEThist.FindBin(sumInvisible.Pt()/1000.))
 		randomNum = random.rand()
 		if randomNum <= truthMETefficiency: evtPassedMETeff = True
-		
+
 	if len(METacceptance) > 0:
 		passedMETacc = True
-	
+
 
 	h["MET"].Fill(sumInvisible.Pt()/1000.)
-	
+
 	h["MET cut-flow"].Fill(0)
 	h["Muon cut-flow"].Fill(0)
-	
-	if evtPassedMETeff: 
+
+	if evtPassedMETeff:
 		h["MET cut-flow"].Fill(1)
+		if len(vertexArr):
+			h["MET cut-flow"].Fill(2)
+			if len(muonArr):
+				h["MET cut-flow"].Fill(3)
+				# passed MET SR
+
 	if evtPassedMuEff:
 		h["Muon cut-flow"].Fill(1)
-	if len(vertexArr) == 0:
-		continue 
-	h["MET cut-flow"].Fill(2)
-	h["Muon cut-flow"].Fill(2)
-	if len(muonArr) == 0:
-		continue
-	h["MET cut-flow"].Fill(3)
-	h["Muon cut-flow"].Fill(3)
+		if len(vertexArr):
+			h["Muon cut-flow"].Fill(2)
+			if len(muonArr):
+				h["Muon cut-flow"].Fill(3)
+				# passed mu SR
+
+
 	#store histogram in root file and use a different script to get the number of events in this last bin
 	#take this number of events and multiply it by (luminosity*cross section)/number of events in first bin
 		#compare this number to the one in the table to see if it's excluded
@@ -255,7 +260,7 @@ for i in range(numEvents):
 		#use the look up table and gitHub link to find the cross section
 	#output masses and lifetime and num events and output of calculation above in table
 	#if 3 is filled, then you've gotten through to MET signal region
-	
+
 C = ROOT.TCanvas("C", "", 600, 600)
 h["MET"].Draw()
 C.SaveAs("MET.pdf")
