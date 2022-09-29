@@ -41,7 +41,7 @@ for i in range(len(seperatedStrings)):
 		if j.isdigit(): 
 			string += j
 	stringList.append(string)
-stopMass = int(stringList[1])*1000 #GeV
+stopMass = int(stringList[1]) #GeV
 neutralinoMass = int(stringList[2]) #GeV
 neutralinoLifetime = int(stringList[3]) #ps
 
@@ -96,7 +96,7 @@ def get_d0(particle):
 	return d0
 
 #Instantiating histogram objects
-cutflowName = "cutflow_" + str(stopMass) + "GeV_" + str(neutralinoLifetime) + "ps"
+cutflowName = "cutflow_" + str(stopMass) + "_GeV_" + str(neutralinoLifetime) + "_ps"
 print(cutflowName)
 outputFile = ROOT.TFile("output.root","RECREATE")
 histogramFile = ROOT.TFile("cutflowFiles/%s.root"%cutflowName, "RECREATE") #put directory/ in front of filename so it outputs into directory of cut-flow files
@@ -112,7 +112,7 @@ h["MET cut-flow"] = ROOT.TH1F("MET cut-flow", "MET cut-flow; cuts; events", 4, 0
 h["Muon cut-flow"] = ROOT.TH1F("Muon cut-flow", "Muon cut-flow; cuts; events", 4, 0, 4)
 
 passingEvents = 0
-numEvents = 100
+numEvents = 1000
 
 #event loop
 for i in range(numEvents):
@@ -295,6 +295,11 @@ histogramFile.WriteObject(h["MET cut-flow"], "MET cut-flow")
 histogramFile.WriteObject(h["Muon cut-flow"], "Muon cut-flow")
 histogramFile.Close()
 
+### Alexander's Playground #####
+#file = ROOT.TFile.Open("cutflowFiles/%s.root"%cutflowName, "READ")
+
+
+###############################
 bins = np.linspace(0, 3., 31)
 data_entries, bins = np.histogram(properdecaytime, bins=bins)
 
