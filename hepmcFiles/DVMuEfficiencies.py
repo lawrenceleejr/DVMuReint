@@ -102,9 +102,6 @@ outputFile = ROOT.TFile("output.root","RECREATE")
 histogramFile = ROOT.TFile("cutflowFiles/%s.root"%cutflowName, "RECREATE") #put directory/ in front of filename so it outputs into directory of cut-flow files
 h = {}
 h["MET"] = ROOT.TH1F("MET", "MET; MET [GeV]; events", 10, 0, 1000)
-# h["MET_Cut1"] = ROOT.TH1F("MET Cut1", "MET; MET [GeV]; events", 10, 0, 1000)
-# h["MET_Cut2"] = ROOT.TH1F("MET Cut2", "MET; MET [GeV]; events", 10, 0, 1000)
-# h["MET_Cut3"] = ROOT.TH1F("MET Cut3", "MET; MET [GeV]; events", 10, 0, 1000)
 h["METacceptance"] = ROOT.TH1F("METacceptance", "MET acceptance; MET [GeV]; events", 50, 0, 1000)
 h["Reconstructables"] = ROOT.TH1F("Reconstructable Decay Products", "Reconstructables; Number reconstructables; events", 50, 0, 100)
 h["Selected decay prods"] = ROOT.TH1F("Selected Decay Products", "Selected decay prods; num selected decay prods; events", 50, 0, 100)
@@ -114,7 +111,6 @@ h["MET cut-flow"] = ROOT.TH1F("MET cut-flow", "MET cut-flow; cuts; events", 4, 0
 h["Muon cut-flow"] = ROOT.TH1F("Muon cut-flow", "Muon cut-flow; cuts; events", 4, 0, 4)
 
 
-# cutlist = ["cut0","cut1","cut2","cut3"]
 ncuts = 4
 distributionsAtCuts = {}
 distributionsAtCuts["SRMET MET"] = {}
@@ -130,13 +126,13 @@ distributionsAtCuts["SRMET MET mupt"] = {}
 
 for icut in range(ncuts):
 	distributionsAtCuts["SRMET MET"][icut] = ROOT.TH1F(f"SRMET MET {icut}", "; MET [GeV]; events", 10, 0, 1000)
-	distributionsAtCuts["SRMET ntrk"][icut] = ROOT.TH1F(f"SRMET ntrk {icut}", "; ntrk; events", 50, 0, 50)
-	distributionsAtCuts["SRMET mvtx"][icut] = ROOT.TH1F(f"SRMET mvtx {icut}", "; mvtx; events", 20, 0, 100)
+	distributionsAtCuts["SRMET ntrk"][icut] = ROOT.TH1F(f"SRMET ntrk {icut}", "; ntrk; events", 15, 0, 45)
+	distributionsAtCuts["SRMET mvtx"][icut] = ROOT.TH1F(f"SRMET mvtx {icut}", "; mvtx; events", 10, 0, 100)
 	distributionsAtCuts["SRMET mvtx ntrk"][icut] = ROOT.TH2F(f"SRMET mvtx ntrk {icut}", "; mvtx; ntrk", 20, 0, 100, 50, 0, 50)
 	distributionsAtCuts["SRMET MET mupt"][icut] = ROOT.TH2F(f"SRMET MET mupt {icut}", "; MET; mupt", 10, 0, 1000, 10, 0, 600)
-	distributionsAtCuts["SRMET maxd0"][icut] = ROOT.TH1F(f"SRMET maxd0 {icut}", "; maxd0; events", 50, 0, 100)
-	distributionsAtCuts["SRMET rxy"][icut] = ROOT.TH1F(f"SRMET rxy {icut}", "; rxy; events", 50, 0, 150)
-	distributionsAtCuts["SRMU mupt"][icut] = ROOT.TH1F(f"SRMU mupt {icut}", ";mu pT [GeV]; events", 10, 0, 600)
+	distributionsAtCuts["SRMET maxd0"][icut] = ROOT.TH1F(f"SRMET maxd0 {icut}", "; maxd0; events", 30, 0, 60)
+	distributionsAtCuts["SRMET rxy"][icut] = ROOT.TH1F(f"SRMET rxy {icut}", "; rxy; events", 20, 0, 80)
+	distributionsAtCuts["SRMU mupt"][icut] = ROOT.TH1F(f"SRMU mupt {icut}", ";mu pT [GeV]; events", 8, 0, 480)
 
 def fillDistributionsAtCuts(varname, value, passCutBoolList ):
 	for icut,passCut in enumerate(passCutBoolList):
@@ -176,6 +172,9 @@ for i in range(numEvents):
 	evtPassedMuEff = False
 
 	maxMuonPt = 0
+
+	selectedVertexProperties = {"mass":-1,"ntrk":-1,"maxd0":-1,"rxy":-1}
+	someVertexProperties = {"mass":-1,"ntrk":-1,"maxd0":-1,"rxy":-1}
 
 	#particle loop
 	for iparticle in evt.particles:
@@ -227,8 +226,11 @@ for i in range(numEvents):
 
 			h["Selected decay prods"].Fill(numSelDecay)
 
+			someVertexProperties = {"mass":InvMass,"ntrk":numSelDecay,"maxd0":maxd0,"rxy":transverseDistance}
+
 			if transverseDistance > 4 and transverseDistance < 300 and abs(iparticle.end_vertex.position[2]) < 300 and numSelDecay >= 3 and InvMass > 20000:
 				passedVertexAcc = True
+				selectedVertexProperties = {"mass":InvMass,"ntrk":numSelDecay,"maxd0":maxd0,"rxy":transverseDistance}
 				if hasAttachedMuon:
 					MuonVertexEff = VertexLvlMuonhist.GetBinContent(VertexLvlMuonhist.FindBin(transverseDistance))
 					randomNum = random.rand()
@@ -255,6 +257,9 @@ for i in range(numEvents):
 				randomNum = random.rand()
 				if randomNum <= MuEff:
 					muonArr.append(iparticle)
+
+	if 	selectedVertexProperties == {"mass":-1,"ntrk":-1,"maxd0":-1,"rxy":-1}:
+		selectedVertexProperties = someVertexProperties
 
 	for imuon in muonEvtAcc:
 		if imuon.momentum.pt()>maxMuonPt:
@@ -298,14 +303,16 @@ for i in range(numEvents):
 				# passed MET SR
 				# h["MET_Cut3"].Fill(sumInvisible.Pt()/1000.)
 
+
+
 	SRMETCutFlowBools = [True,evtPassedMETeff, len(vertexArr), len(muonArr)]
 	fillDistributionsAtCuts("SRMET MET", sumInvisible.Pt()/1000., SRMETCutFlowBools)
-	fillDistributionsAtCuts("SRMET ntrk", numSelDecay, SRMETCutFlowBools)
-	fillDistributionsAtCuts("SRMET mvtx", InvMass/1000., SRMETCutFlowBools)
-	fillDistributionsAtCuts("SRMET maxd0", maxd0, SRMETCutFlowBools)
-	fillDistributionsAtCuts("SRMET rxy", transverseDistance, SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET ntrk", selectedVertexProperties["ntrk"], SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET mvtx", selectedVertexProperties["mass"]/1000., SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET maxd0", selectedVertexProperties["maxd0"], SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET rxy", selectedVertexProperties["rxy"], SRMETCutFlowBools)
 
-	fillDistributionsAtCuts2D("SRMET mvtx ntrk", InvMass/1000., numSelDecay, SRMETCutFlowBools)
+	fillDistributionsAtCuts2D("SRMET mvtx ntrk", selectedVertexProperties["mass"]/1000., selectedVertexProperties["ntrk"], SRMETCutFlowBools)
 	fillDistributionsAtCuts2D("SRMET MET mupt", sumInvisible.Pt()/1000., maxMuonPt/1000., SRMETCutFlowBools)
 
 

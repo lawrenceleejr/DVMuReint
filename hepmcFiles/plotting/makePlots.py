@@ -42,6 +42,8 @@ plt.yscale('log')
 plt.legend(frameon=False)
 plt.text(0.0,1.03,samplelabel+", SRMET", transform=ax.transAxes)
 
+plt.ylim(1e-4,5e-1)
+
 plt.savefig("SRMET_MET.pdf")
 
 ##########################################
@@ -61,6 +63,9 @@ plt.xlabel(r"Track Multiplicity"); plt.ylabel("Fraction")
 plt.yscale('log')
 plt.legend(frameon=False)
 plt.text(0.0,1.03,samplelabel+", SRMET", transform=ax.transAxes)
+
+plt.ylim(1e-4,5e-1)
+
 
 plt.savefig("SRMET_ntrk.pdf")
 
@@ -83,6 +88,9 @@ plt.yscale('log')
 plt.legend(frameon=False)
 plt.text(0.0,1.03,samplelabel+", SRMET", transform=ax.transAxes)
 
+plt.ylim(5e-4,1e0)
+
+
 plt.savefig("SRMET_mvtx.pdf")
 
 
@@ -103,6 +111,10 @@ plt.xlabel(r"Maximum Track d0 [mm]"); plt.ylabel("Fraction")
 plt.yscale('log')
 plt.legend(frameon=False)
 plt.text(0.0,1.03,samplelabel+", SRMET", transform=ax.transAxes)
+
+
+plt.ylim(5e-4,1e-1)
+
 
 plt.savefig("SRMET_maxd0.pdf")
 
@@ -125,6 +137,9 @@ plt.yscale('log')
 plt.legend(frameon=False)
 plt.text(0.0,1.03,samplelabel+", SRMET", transform=ax.transAxes)
 
+plt.ylim(5e-4,2e-1)
+
+
 plt.savefig("SRMET_rxy.pdf")
 
 
@@ -146,6 +161,9 @@ plt.xlabel(r"Muon Pt [mm]"); plt.ylabel("Fraction")
 plt.yscale('log')
 plt.legend(frameon=False)
 plt.text(0.0,1.03,samplelabel+", SRMU", transform=ax.transAxes)
+
+plt.ylim(5e-4,2e0)
+
 
 plt.savefig("SRMU_mupt.pdf")
 
