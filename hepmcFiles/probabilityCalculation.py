@@ -24,7 +24,7 @@ writer.writerow(header)
 #make file loop to loop over all MET and muon cutflow files of efficiencies script
 for ifile in os.listdir("cutflowFiles"):
 	filename = os.fsdecode(ifile)
-	cutFlowFile = ROOT.TFile("cutflowFiles/%s"%filename)
+	cutFlowFile = ROOT.TFile("cutflowFiles/%s"%filename, "UPDATE")
 	seperatedStrings = filename.split('_')
 	#stringList = []
 	#for i in range(len(seperatedStrings)):
@@ -38,11 +38,12 @@ for ifile in os.listdir("cutflowFiles"):
 	cutFlowFile.ls()
 	print( "%s cut-flow"%SR)	
 	cutFlowHist = cutFlowFile.Get("%s cut-flow"%SR)
-
 	numGeneratedEvts = cutFlowHist.GetBinContent(1)
 	finalNumEvts = cutFlowHist.GetBinContent(4)
 	crossSection = xsData["data"][str(stopMass)]["xsec_pb"] #pb
-	
+	normCutFlowHist = cutFlowHist.Clone("%s normalized cut-flow"%SR)
+	normCutFlowHist.Scale(luminosity*crossSection/numGeneratedEvts)
+	normCutFlowHist.Write()
 	
 	normalizedNumEvts = finalNumEvts*(luminosity*crossSection/numGeneratedEvts)
 	
@@ -56,7 +57,7 @@ for ifile in os.listdir("cutflowFiles"):
 	print(f"{crossSection=}")
 	print(f"{numGeneratedEvts=}")
 
-
+cutFlowFile.Write()
 #name the output root file so that it contains the stop mass and neutralino lifetime in the program
 #read in the root files loop over them and get the mass from the file name 
 	#ask for the file names that match the expected structure and get a list of file names
