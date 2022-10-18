@@ -21,18 +21,10 @@ writer = csv.writer(f)
 header = ["mass", "lifetime", "normalizedNumEvts"]
 writer.writerow(header)
 
-#make file loop to loop over all MET and muon cutflow files of efficiencies script
 for ifile in os.listdir("cutflowFiles"):
 	filename = os.fsdecode(ifile)
 	cutFlowFile = ROOT.TFile("cutflowFiles/%s"%filename, "UPDATE")
 	seperatedStrings = filename.split('_')
-	#stringList = []
-	#for i in range(len(seperatedStrings)):
-	#	string = ""
-	#	for j in seperatedStrings[i]:
-	#		if j.isdigit(): 
-	#			string += j
-	#	stringList.append(string)
 	stopMass = int(seperatedStrings[1]) #GeV
 	neutralinoLifetime = int(seperatedStrings[3]) #ps 
 	cutFlowFile.ls()
@@ -58,10 +50,4 @@ for ifile in os.listdir("cutflowFiles"):
 	print(f"{numGeneratedEvts=}")
 
 cutFlowFile.Write()
-#name the output root file so that it contains the stop mass and neutralino lifetime in the program
-#read in the root files loop over them and get the mass from the file name 
-	#ask for the file names that match the expected structure and get a list of file names
-	#you can parse the strings of file names to get the mass and lifetimes
-#make looking at muon or met SR as a command line option
 
-#the output should be a table (csv file) that has the expected number of events and the model parameters
