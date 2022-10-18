@@ -2929,8 +2929,8 @@ Setting grid   1    0.23669E-01   1
  Masses: 0.000E+00 0.000E+00 0.100E+04 0.100E+04
  Got moffset           1
 Using random seed offsets     1 :      2
-  with seed                   30
- Ranmar initialization seeds        8292       12563
+  with seed                   36
+ Ranmar initialization seeds       15606       12569
  
  ********************************************
  * You are using the DiscreteSampler module *
@@ -2946,55 +2946,55 @@ Using random seed offsets     1 :      2
 d R # 3  >    -0.0     0.0
 s min # 3>     0.0     0.0
 xqcutij # 3>     0.0     0.0
- alpha_s for scale    1303.6129314981445       is    9.0267048200066508E-002
+ alpha_s for scale    1018.6090299432549       is    9.2883668296874083E-002
  RESET CUMULATIVE VARIABLE
- Iteration  1   Mean: 0.1528E-02 Abs mean: 0.1528E-02   Fluctuation:  0.172E-03   0.744E-01    98.3%
-  1    0.1528E-02 0.1528E-02 +- 0.1719E-03      3.56
- Writing out events   3.1087239553954176E-007   3.5571175915432693     
+ Iteration  1   Mean: 0.1802E-02 Abs mean: 0.1802E-02   Fluctuation:  0.239E-03   0.998E-01    98.1%
+  1    0.1802E-02 0.1802E-02 +- 0.2385E-03      4.19
+ Writing out events   3.6725278868066012E-007   4.1860315493444960     
  Relative summed weights:
   0.1000E+01  0.0000E+00
  Relative number of events:
   0.1000E+01  0.0000E+00
  Events:
         1009           0
- Iteration  2   Mean: 0.1520E-02 Abs mean: 0.1520E-02   Fluctuation:  0.482E-04   0.191E-01    99.6%
-  2    0.1520E-02 0.1520E-02 +- 0.4822E-04      1.42
+ Iteration  2   Mean: 0.1497E-02 Abs mean: 0.1497E-02   Fluctuation:  0.481E-04   0.144E-01    99.3%
+  2    0.1497E-02 0.1497E-02 +- 0.4812E-04      1.44
  Relative summed weights:
   0.1000E+01  0.0000E+00
  Relative number of events:
   0.1000E+01  0.0000E+00
  Events:
-        2000           0
- Iteration  3   Mean: 0.1546E-02 Abs mean: 0.1546E-02   Fluctuation:  0.225E-04   0.107E-01    99.8%
-  3    0.1546E-02 0.1546E-02 +- 0.2251E-04      0.92
+        1999           0
+ Iteration  3   Mean: 0.1529E-02 Abs mean: 0.1529E-02   Fluctuation:  0.217E-04   0.992E-02    99.7%
+  3    0.1529E-02 0.1529E-02 +- 0.2174E-04      0.90
  Relative summed weights:
   0.1000E+01  0.0000E+00
  Relative number of events:
   0.1000E+01  0.0000E+00
  Events:
         4000           0
- Accuracy:    0.005   0.100   0.013   0.120
- Finished due to accuracy    4.5448922464693927E-003  0.10000000000000001     
+ Accuracy:    0.014   0.100   0.013   1.120
+ Finished due to accuracy    1.3693068986727702E-002  0.10000000000000001     
 
  -------------------------------------------------------------------------------
- Accumulated results:   Integral =  0.1541E-02
-                        Std dev  =  0.2026E-04
-                       Cross sec =  0.1541E-02
-             Chi**2 per DoF.     =      0.1195
+ Accumulated results:   Integral =  0.1527E-02
+                        Std dev  =  0.1975E-04
+                       Cross sec =  0.1527E-02
+             Chi**2 per DoF.     =      1.1204
  -------------------------------------------------------------------------------
- Found          391  events.
- Wrote          387  events.
- Actual xsec    1.5409726798061045E-003
- Correct abs xsec    1.5409726798061045E-003
- Event xsec    1.5409726798060964E-003
+ Found          387  events.
+ Wrote          384  events.
+ Actual xsec    1.5267025592734516E-003
+ Correct abs xsec    1.5267025592734516E-003
+ Event xsec    1.5267025592734583E-003
  Events wgts > 1:            0
  % Cross section > 1:    0.0000000000000000        0.0000000000000000     
 -------------------------------------------------
 ---------------------------
- Results Last   3 iters: Integral =   0.1541E-02
-                     Abs integral =   0.1541E-02
-                          Std dev =   0.2026E-04
-                  Chi**2 per DoF. =      0.1221
+ Results Last   3 iters: Integral =   0.1527E-02
+                     Abs integral =   0.1527E-02
+                          Std dev =   0.1975E-04
+                  Chi**2 per DoF. =      0.8659
 -------------------------------------------------
 ---------------------------
  Status  0.10000000000000001                4           5

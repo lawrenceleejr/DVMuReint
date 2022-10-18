@@ -2928,8 +2928,8 @@ Setting grid   1    0.59172E-02   1
    3   1   2   3   4
  Masses: 0.000E+00 0.000E+00 0.100E+04 0.100E+04
 Using random seed offsets     3 :      2
-  with seed                   30
- Ranmar initialization seeds        8294        9406
+  with seed                   36
+ Ranmar initialization seeds       15608        9412
  
  ********************************************
  * You are using the DiscreteSampler module *
@@ -2945,7 +2945,7 @@ Using random seed offsets     3 :      2
 d R # 3  >    -0.0     0.0
 s min # 3>     0.0     0.0
 xqcutij # 3>     0.0     0.0
- alpha_s for scale    1146.0811292526405       is    9.1614063282662667E-002
+ alpha_s for scale    1449.3334067279343       is    8.9188626005205066E-002
  RESET CUMULATIVE VARIABLE
         1000  points passed the cut but all returned zero
  therefore considering this contribution as zero
@@ -2958,3 +2958,4 @@ input_app.txt
 results.dat
 run1_app.log
 run_01_log.txt
+run_02_log.txt
