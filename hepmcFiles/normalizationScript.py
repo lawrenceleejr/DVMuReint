@@ -42,11 +42,11 @@ for ifile in os.listdir("cutflowFiles"):
         data = [stopMass, neutralinoLifetime, normalizedNumEvts]
         writer.writerow(data)
 
-        print(normalizedNumEvts)
-        print(f"{normalizedNumEvts=}")
-        print(f"{finalNumEvts=}")
-        print(f"{luminosity=}")
-        print(f"{crossSection=}")
-        print(f"{numGeneratedEvts=}")
+        #print(normalizedNumEvts)
+        #print(f"{normalizedNumEvts=}")
+        #print(f"{finalNumEvts=}")
+        #print(f"{luminosity=}")
+        #print(f"{crossSection=}")
+        #print(f"{numGeneratedEvts=}")
 
 cutFlowFile.Write()
