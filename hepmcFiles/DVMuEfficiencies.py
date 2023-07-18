@@ -32,6 +32,7 @@ VertexLvlMuonhist = VertexLvlMuonfile.Get("Auxiliary Figure 10b/Hist1D_y1")
 
 adapter = pyhepmc_ng.ReaderAsciiHepMC2(filename=str(sys.argv[1]))
 
+#extracting stop mass and neutralino mass, lifetime from filename
 fileName = str(sys.argv[1])
 seperatedStrings = fileName.split('_')
 stringList = []
