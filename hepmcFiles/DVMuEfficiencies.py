@@ -214,7 +214,7 @@ for i in range(numEvents):
 
 					ipart_momentum.SetXYZM(ipart_momentum.Px(), ipart_momentum.Py(), ipart_momentum.Pz(),CHARGED_PION_MASS)
 					sumSelDecayProds += ipart_momentum
-				if ipart.pid == 13 and iparticle.momentum.pt() > 25000 and abs(get_d0(ipart)) > 2 and abs(get_d0(ipart)) < 300 and iparticle.momentum.abs_eta() < 2.5:
+				if abs(ipart.pid) == 13 and iparticle.momentum.pt() > 25000 and abs(get_d0(ipart)) > 2 and abs(get_d0(ipart)) < 300 and iparticle.momentum.abs_eta() < 2.5:
 					hasAttachedMuon = True
 				if abs(get_d0(ipart))>maxd0:
 					maxd0 = abs(get_d0(ipart))
@@ -243,7 +243,7 @@ for i in range(numEvents):
 					if randomNum <= NoMuonVertexEff:
 						vertexArr.append(iparticle.end_vertex.position)
 
-		if iparticle.pid == 13:
+		if abs(iparticle.pid) == 13:
 			#muon event level acceptance
 			d0 = get_d0(iparticle)
 			if iparticle.momentum.pt() > 62000 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 1.05:
