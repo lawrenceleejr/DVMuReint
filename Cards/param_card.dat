@@ -43,7 +43,7 @@ BLOCK MASS #
       1000003 5.684411e+02 # msd2
       1000004 5.611190e+02 # msu2
       1000005 5.130652e+02 # msd3
-      1000006 scan:range(800, 1600, 100) # msu3
+      1000006 1500 # msu3
       1000011 2.029157e+02 # msl1
       1000012 1.852583e+02 # msn1
       1000013 2.029157e+02 # msl2
@@ -421,7 +421,7 @@ DECAY 1000014 1.498816e-01 # wsn2
 DECAY 1000015 1.483273e-01 # wsl3
 DECAY 1000016 1.475190e-01 # wsn3
 DECAY 1000021 5.506754e+00 # wgo
-DECAY 1000022 6.582000e-17 # wneu1
+DECAY 1000022 6.582000e-14 # wneu1
       5.000000e-01 3 3 5 6 # t su1
       5.000000e-01 3 -6 -5 -3 # t su1
 
@@ -455,7 +455,7 @@ DECAY 22 0.000000e+00 # a : 0.0
 ###################################
 ## INFORMATION FOR QNUMBERS 1000022
 ###################################
-BLOCK QNUMBERS 1000022 #                        n1
+BLOCK QNUMBERS 1000022 #                                    n1
       1 0 # 3 times electric charge
       2 2 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -463,7 +463,7 @@ BLOCK QNUMBERS 1000022 #                        n1
 ###################################
 ## INFORMATION FOR QNUMBERS 1000023
 ###################################
-BLOCK QNUMBERS 1000023 #                        n2
+BLOCK QNUMBERS 1000023 #                                    n2
       1 0 # 3 times electric charge
       2 2 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -471,7 +471,7 @@ BLOCK QNUMBERS 1000023 #                        n2
 ###################################
 ## INFORMATION FOR QNUMBERS 1000025
 ###################################
-BLOCK QNUMBERS 1000025 #                        n3
+BLOCK QNUMBERS 1000025 #                                    n3
       1 0 # 3 times electric charge
       2 2 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -479,7 +479,7 @@ BLOCK QNUMBERS 1000025 #                        n3
 ###################################
 ## INFORMATION FOR QNUMBERS 1000035
 ###################################
-BLOCK QNUMBERS 1000035 #                        n4
+BLOCK QNUMBERS 1000035 #                                    n4
       1 0 # 3 times electric charge
       2 2 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -487,7 +487,7 @@ BLOCK QNUMBERS 1000035 #                        n4
 ###################################
 ## INFORMATION FOR QNUMBERS 1000024
 ###################################
-BLOCK QNUMBERS 1000024 #                        x1+
+BLOCK QNUMBERS 1000024 #                                    x1+
       1 3 # 3 times electric charge
       2 2 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -495,7 +495,7 @@ BLOCK QNUMBERS 1000024 #                        x1+
 ###################################
 ## INFORMATION FOR QNUMBERS 1000037
 ###################################
-BLOCK QNUMBERS 1000037 #                        x2+
+BLOCK QNUMBERS 1000037 #                                    x2+
       1 3 # 3 times electric charge
       2 2 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -503,7 +503,7 @@ BLOCK QNUMBERS 1000037 #                        x2+
 ###################################
 ## INFORMATION FOR QNUMBERS 1000021
 ###################################
-BLOCK QNUMBERS 1000021 #                        go
+BLOCK QNUMBERS 1000021 #                                    go
       1 0 # 3 times electric charge
       2 2 # number of spin states (2s+1)
       3 8 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -511,7 +511,7 @@ BLOCK QNUMBERS 1000021 #                        go
 ###################################
 ## INFORMATION FOR QNUMBERS 35
 ###################################
-BLOCK QNUMBERS 35 #                        h2
+BLOCK QNUMBERS 35 #                                    h2
       1 0 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -519,7 +519,7 @@ BLOCK QNUMBERS 35 #                        h2
 ###################################
 ## INFORMATION FOR QNUMBERS 36
 ###################################
-BLOCK QNUMBERS 36 #                        h3
+BLOCK QNUMBERS 36 #                                    h3
       1 0 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -527,7 +527,7 @@ BLOCK QNUMBERS 36 #                        h3
 ###################################
 ## INFORMATION FOR QNUMBERS 37
 ###################################
-BLOCK QNUMBERS 37 #                        h+
+BLOCK QNUMBERS 37 #                                    h+
       1 3 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -535,7 +535,7 @@ BLOCK QNUMBERS 37 #                        h+
 ###################################
 ## INFORMATION FOR QNUMBERS 1000012
 ###################################
-BLOCK QNUMBERS 1000012 #                        sve
+BLOCK QNUMBERS 1000012 #                                    sve
       1 0 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -543,7 +543,7 @@ BLOCK QNUMBERS 1000012 #                        sve
 ###################################
 ## INFORMATION FOR QNUMBERS 1000014
 ###################################
-BLOCK QNUMBERS 1000014 #                        svm
+BLOCK QNUMBERS 1000014 #                                    svm
       1 0 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -551,7 +551,7 @@ BLOCK QNUMBERS 1000014 #                        svm
 ###################################
 ## INFORMATION FOR QNUMBERS 1000016
 ###################################
-BLOCK QNUMBERS 1000016 #                        svt
+BLOCK QNUMBERS 1000016 #                                    svt
       1 0 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -559,7 +559,7 @@ BLOCK QNUMBERS 1000016 #                        svt
 ###################################
 ## INFORMATION FOR QNUMBERS 1000011
 ###################################
-BLOCK QNUMBERS 1000011 #                        el-
+BLOCK QNUMBERS 1000011 #                                    el-
       1 -3 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -567,7 +567,7 @@ BLOCK QNUMBERS 1000011 #                        el-
 ###################################
 ## INFORMATION FOR QNUMBERS 1000013
 ###################################
-BLOCK QNUMBERS 1000013 #                        mul-
+BLOCK QNUMBERS 1000013 #                                    mul-
       1 -3 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -575,7 +575,7 @@ BLOCK QNUMBERS 1000013 #                        mul-
 ###################################
 ## INFORMATION FOR QNUMBERS 1000015
 ###################################
-BLOCK QNUMBERS 1000015 #                        ta1-
+BLOCK QNUMBERS 1000015 #                                    ta1-
       1 -3 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -583,7 +583,7 @@ BLOCK QNUMBERS 1000015 #                        ta1-
 ###################################
 ## INFORMATION FOR QNUMBERS 2000011
 ###################################
-BLOCK QNUMBERS 2000011 #                        er-
+BLOCK QNUMBERS 2000011 #                                    er-
       1 -3 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -591,7 +591,7 @@ BLOCK QNUMBERS 2000011 #                        er-
 ###################################
 ## INFORMATION FOR QNUMBERS 2000013
 ###################################
-BLOCK QNUMBERS 2000013 #                        mur-
+BLOCK QNUMBERS 2000013 #                                    mur-
       1 -3 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -599,7 +599,7 @@ BLOCK QNUMBERS 2000013 #                        mur-
 ###################################
 ## INFORMATION FOR QNUMBERS 2000015
 ###################################
-BLOCK QNUMBERS 2000015 #                        ta2-
+BLOCK QNUMBERS 2000015 #                                    ta2-
       1 -3 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 1 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -607,7 +607,7 @@ BLOCK QNUMBERS 2000015 #                        ta2-
 ###################################
 ## INFORMATION FOR QNUMBERS 1000002
 ###################################
-BLOCK QNUMBERS 1000002 #                        ul
+BLOCK QNUMBERS 1000002 #                                    ul
       1 2 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -615,7 +615,7 @@ BLOCK QNUMBERS 1000002 #                        ul
 ###################################
 ## INFORMATION FOR QNUMBERS 1000004
 ###################################
-BLOCK QNUMBERS 1000004 #                        cl
+BLOCK QNUMBERS 1000004 #                                    cl
       1 2 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -623,7 +623,7 @@ BLOCK QNUMBERS 1000004 #                        cl
 ###################################
 ## INFORMATION FOR QNUMBERS 1000006
 ###################################
-BLOCK QNUMBERS 1000006 #                        t1
+BLOCK QNUMBERS 1000006 #                                    t1
       1 2 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -631,7 +631,7 @@ BLOCK QNUMBERS 1000006 #                        t1
 ###################################
 ## INFORMATION FOR QNUMBERS 2000002
 ###################################
-BLOCK QNUMBERS 2000002 #                        ur
+BLOCK QNUMBERS 2000002 #                                    ur
       1 2 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -639,7 +639,7 @@ BLOCK QNUMBERS 2000002 #                        ur
 ###################################
 ## INFORMATION FOR QNUMBERS 2000004
 ###################################
-BLOCK QNUMBERS 2000004 #                        cr
+BLOCK QNUMBERS 2000004 #                                    cr
       1 2 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -647,7 +647,7 @@ BLOCK QNUMBERS 2000004 #                        cr
 ###################################
 ## INFORMATION FOR QNUMBERS 2000006
 ###################################
-BLOCK QNUMBERS 2000006 #                        t2
+BLOCK QNUMBERS 2000006 #                                    t2
       1 2 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -655,7 +655,7 @@ BLOCK QNUMBERS 2000006 #                        t2
 ###################################
 ## INFORMATION FOR QNUMBERS 1000001
 ###################################
-BLOCK QNUMBERS 1000001 #                        dl
+BLOCK QNUMBERS 1000001 #                                    dl
       1 -1 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -663,7 +663,7 @@ BLOCK QNUMBERS 1000001 #                        dl
 ###################################
 ## INFORMATION FOR QNUMBERS 1000003
 ###################################
-BLOCK QNUMBERS 1000003 #                        sl
+BLOCK QNUMBERS 1000003 #                                    sl
       1 -1 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -671,7 +671,7 @@ BLOCK QNUMBERS 1000003 #                        sl
 ###################################
 ## INFORMATION FOR QNUMBERS 1000005
 ###################################
-BLOCK QNUMBERS 1000005 #                        b1
+BLOCK QNUMBERS 1000005 #                                    b1
       1 -1 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -679,7 +679,7 @@ BLOCK QNUMBERS 1000005 #                        b1
 ###################################
 ## INFORMATION FOR QNUMBERS 2000001
 ###################################
-BLOCK QNUMBERS 2000001 #                        dr
+BLOCK QNUMBERS 2000001 #                                    dr
       1 -1 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -687,7 +687,7 @@ BLOCK QNUMBERS 2000001 #                        dr
 ###################################
 ## INFORMATION FOR QNUMBERS 2000003
 ###################################
-BLOCK QNUMBERS 2000003 #                        sr
+BLOCK QNUMBERS 2000003 #                                    sr
       1 -1 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)
@@ -695,7 +695,7 @@ BLOCK QNUMBERS 2000003 #                        sr
 ###################################
 ## INFORMATION FOR QNUMBERS 2000005
 ###################################
-BLOCK QNUMBERS 2000005 #                        b2
+BLOCK QNUMBERS 2000005 #                                    b2
       1 -1 # 3 times electric charge
       2 1 # number of spin states (2s+1)
       3 3 # colour rep (1: singlet, 3: triplet, 8: octet)

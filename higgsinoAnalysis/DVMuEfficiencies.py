@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import argparse
 import pyhepmc_ng
 import ROOT
 ROOT.gROOT.SetBatch()
@@ -10,45 +11,46 @@ from numpy import random
 from scipy.optimize import curve_fit
 from particle import Particle
 
-#importing root files and extracting histograms for efficiency calculation
-truthMETfile = ROOT.TFile("HEPData_truthMET.root")
-truthMEThist = truthMETfile.Get("Auxiliary Figure 8a/Hist1D_y1")
-
-MuEvtLvlfile = ROOT.TFile("HEPData_MuEvtLvl.root")
-MuEvtLvlHist = MuEvtLvlfile.Get("Auxiliary Figure 8b/Hist2D_y1")
-
-MuLvlfile = ROOT.TFile("HEPData_MuLvl.root")
-MuLvlhist = MuLvlfile.Get("Auxiliary Figure 9/Hist2D_y1")
-
-VertexLvlfile = ROOT.TFile("HEPData_vertexLvl.root")
-VertexLvlhist = VertexLvlfile.Get("Auxiliary Figure 10a/Hist1D_y1")
-
-VertexLvlMuonfile = ROOT.TFile("HEPData_vertexLvlWithMuon.root")
-VertexLvlMuonhist = VertexLvlMuonfile.Get("Auxiliary Figure 10b/Hist1D_y1")
 
 #--- INFORMATION ON UNITS ---
-#functions give MeV, want to graph in GeV
-#functions give mm
+# hepmc data are in GeV, mm
+# filename is in ps 
 
-adapter = pyhepmc_ng.ReaderAsciiHepMC2(filename=str(sys.argv[1]))
+#importing root files and extracting histograms for efficiency calculation
+truthMETfile = ROOT.TFile("hepdata/HEPData_truthMET.root")
+truthMEThist = truthMETfile.Get("Auxiliary Figure 8a/Hist1D_y1")
 
-#extracting stop mass and neutralino mass, lifetime from filename
-fileName = str(sys.argv[1])
-seperatedStrings = fileName.split('_')
-stringList = []
-for i in range(len(seperatedStrings)):
-	string = ""
-	for j in seperatedStrings[i]:
-		if j.isdigit():
-			string += j
-	stringList.append(string)
-stopMass = int(stringList[1]) #GeV
-neutralinoMass = 200 #GeV
-neutralinoLifetime = int(stringList[3]) #ps
-print(stopMass)
-print(neutralinoLifetime)
+MuEvtLvlfile = ROOT.TFile("hepdata/HEPData_MuEvtLvl.root")
+MuEvtLvlHist = MuEvtLvlfile.Get("Auxiliary Figure 8b/Hist2D_y1")
 
-evt = pyhepmc_ng.GenEvent(momentum_unit=pyhepmc_ng.Units.MEV, length_unit=pyhepmc_ng.Units.MM)
+MuLvlfile = ROOT.TFile("hepdata/HEPData_MuLvl.root")
+MuLvlhist = MuLvlfile.Get("Auxiliary Figure 9/Hist2D_y1")
+
+VertexLvlfile = ROOT.TFile("hepdata/HEPData_vertexLvl.root")
+VertexLvlhist = VertexLvlfile.Get("Auxiliary Figure 10a/Hist1D_y1")
+
+VertexLvlMuonfile = ROOT.TFile("hepdata/HEPData_vertexLvlWithMuon.root")
+VertexLvlMuonhist = VertexLvlMuonfile.Get("Auxiliary Figure 10b/Hist1D_y1")
+
+# Handle inputs 
+parser = argparse.ArgumentParser( description = 'compute DV muon efficiencies')
+
+parser.add_argument('-f', '--filename', default="input/C1N2_m-800_tau-100ps_pythia8_events.hepmc") 
+parser.add_argument('-n', '--nevents' , default=-1)
+
+args = parser.parse_args()
+
+filename=args.filename
+maxEvents=args.nevents
+
+neutralinoMass= int(filename.split("_")[1].strip("m-")) # GeV
+neutralinoLifetime=filename.split("_")[2].strip("tau-").strip("ps") # ps
+print(neutralinoMass,neutralinoLifetime)
+
+# Read hepmc file
+adapter = pyhepmc_ng.ReaderAsciiHepMC2(filename)
+
+evt = pyhepmc_ng.GenEvent(momentum_unit=pyhepmc_ng.Units.GEV, length_unit=pyhepmc_ng.Units.MM)
 
 decaytime = []
 properdecaytime = []
@@ -56,6 +58,7 @@ MET = []
 METacceptance = []
 muonAcc = []
 CHARGED_PION_MASS = 139.570 #MeV
+CHARGED_PION_MASS = 0.139570 #GeV
 
 def fit_function(x, A, B):
 	return (A * np.exp(-x/B))
@@ -99,20 +102,24 @@ def get_d0(particle):
 	return d0
 
 #Instantiating histogram objects
-cutflowName = "cutflow_" + str(stopMass) + "_GeV_" + str(neutralinoLifetime) + "_ps"
-print(cutflowName)
-outputFile = ROOT.TFile("output.root","RECREATE")
-histogramFile = ROOT.TFile("cutflowFiles/%s.root"%cutflowName, "RECREATE") #put directory/ in front of filename so it outputs into directory of cut-flow files
-h = {}
-h["MET"] = ROOT.TH1F("MET", "MET; MET [GeV]; events", 10, 0, 1000)
-h["METacceptance"] = ROOT.TH1F("METacceptance", "MET acceptance; MET [GeV]; events", 50, 0, 1000)
-h["Reconstructables"] = ROOT.TH1F("Reconstructable Decay Products", "Reconstructables; Number reconstructables; events", 50, 0, 100)
-h["Selected decay prods"] = ROOT.TH1F("Selected Decay Products", "Selected decay prods; num selected decay prods; events", 50, 0, 100)
-h["decay products"] = ROOT.TH1F("Decay products", "decay products; num decay products; events", 50, 0, 100)
-h["proper decay time"] = ROOT.TH1F("proper decay time", "proper decay Time; decay time (mm); events", 50, 0, 30)
-h["MET cut-flow"] = ROOT.TH1F("MET cut-flow", "MET cut-flow; cuts; events", 4, 0, 4)
-h["Muon cut-flow"] = ROOT.TH1F("Muon cut-flow", "Muon cut-flow; cuts; events", 4, 0, 4)
+outputName = "cutflow_" + str(neutralinoMass) + "_GeV_" + str(neutralinoLifetime) + "_ps"
+outputFile    = ROOT.TFile("output/{}.root".format(outputName),"RECREATE")
+histogramFile = ROOT.TFile("hists/{}.root" .format(outputName), "RECREATE") 
+#print(outputName)
 
+h = {}
+h["MET"] 					= ROOT.TH1F("MET", "MET; MET [GeV]; events", 50, 0, 1000)
+h["METacceptance"]  		= ROOT.TH1F("METacceptance", "MET acceptance; MET [GeV]; events", 50, 0, 1000)
+h["Reconstructables"] 		= ROOT.TH1F("Reconstructable Decay Products", "Number Reconstructables; n reconstructables; events", 50, 0, 100)
+h["Selected decay prods"] 	= ROOT.TH1F("Selected Decay Products", "Selected decay prods; n selected decay prods; events", 50, 0, 100)
+h["Selected decay prods"] 	= ROOT.TH1F("Selected Decay Products", "Selected decay prods; n selected decay prods; events", 50, 0, 100)
+h["proper decay time"]		= ROOT.TH1F("proper decay time", "proper decay time; decay time (mm); events", 100, 0, 300)
+h["transverse distance"]	= ROOT.TH1F("transverse distance", "transverse distance; decay rxy (mm); events", 100, 0, 300)
+h["MET cut-flow"] 			= ROOT.TH1F("MET cut-flow", "MET cut-flow; cut number; events", 4, 0, 4)
+h["Muon cut-flow"] 			= ROOT.TH1F("Muon cut-flow", "Muon cut-flow; cut number; events", 4, 0, 4)
+h["Muon pt"] 				= ROOT.TH1F("Muon pt", "Muon pT [GeV]; muons", 50, 0, 200)
+h["Muon eta"] 				= ROOT.TH1F("Muon eta", "Muon eta; muons", 50, -3.0, 3.0)
+h["Muon d0"] 				= ROOT.TH1F("Muon d0", "Muon d0 [mm]; muons", 50, 0, 300)
 
 ncuts = 4
 distributionsAtCuts = {}
@@ -152,16 +159,44 @@ def fillDistributionsAtCuts2D(varname, value1, value2, passCutBoolList ):
 		else:
 			break
 
+def countTowardsMET(particle):
+
+	# Returns TRUE if we should count a particle as "visible" to compute the MET
+
+	# if we have a muon or neutrino, or a SUSY particle
+	if abs(particle.pid) in [12, 13, 14, 16, 1000022, 1000023, 1000049]: return False 
+
+	# else we have a visible SM particle
+
+	# Check particle status
+	if abs(particle.pid) < 1000000 and particle.status != 1 : return False
+
+	# Particle must be produced before calo
+	vtx_prod = particle.production_vertex.position 
+
+	if vtx_prod.perp() > 2000 or abs(vtx_prod.z) > 4000 : return False 
+
+	# and Decay after calo
+	if particle.end_vertex is None: 
+		return True # stable
+	else : # has an end vertex
+
+		vtx_end  = particle.end_vertex.position
+		if vtx_end.perp() > 3000 or abs(vtx_prod.z) > 6000 : return True # and decay beyond calo
+		else : return False
+
+
 passingEvents = 0
-numEvents = 1000
+numEvents = 10000
 
 #event loop
 for i in range(numEvents):
 	adapter.read_event(evt)
-	if i%100 == 0 and i > 0:
+	if i%1000 == 0 and i > 0:
 		print(i)
 
 	sumInvisible = ROOT.TLorentzVector()
+	sumVisible = ROOT.TLorentzVector()
 	muonEvtAcc = []
 	passedMuEvtAcc = False
 	passedMETacc = False
@@ -179,19 +214,24 @@ for i in range(numEvents):
 	selectedVertexProperties = {"mass":-1,"ntrk":-1,"maxd0":-1,"rxy":-1}
 	someVertexProperties = {"mass":-1,"ntrk":-1,"maxd0":-1,"rxy":-1}
 
+	#print("event",i)
+
 	#particle loop
 	for iparticle in evt.particles:
 		#calculating MET
-		if abs(iparticle.pid) in [12, 13, 14, 16]: #including muons in MET
+			
+
+		#Compute MET 
+		if countTowardsMET(iparticle): 
+
 			p = ROOT.TLorentzVector(iparticle.momentum.px, iparticle.momentum.py, iparticle.momentum.pz, iparticle.momentum.e)
-			sumInvisible += p
-			#add in LLP treatment
+			sumVisible += p
 
-		if iparticle.pid == 1000022 and iparticle.end_vertex is not None:
-			#print(dir(iparticle))
+		#if iparticle.pid > 1000000: 
+		#	print(iparticle.pid, iparticle.momentum.m(), iparticle.status, len(iparticle.children))
 
-			numdecayprod = len(iparticle.children)
-			h["decay products"].Fill(numdecayprod)
+		if iparticle.pid == 1000022 and iparticle.end_vertex is not None and len(iparticle.children)>1:
+				
 
 			#proper decay time of neutralino
 			decaytime.append(iparticle.end_vertex.position[3])
@@ -203,20 +243,22 @@ for i in range(numEvents):
 			sumSelDecayProds = ROOT.TLorentzVector()
 
 			#
-			numReconstructables = len(get_reconstructable_children(iparticle, iparticle.end_vertex.position))
-			h["Reconstructables"].Fill(numReconstructables)
+			reco_children = get_reconstructable_children(iparticle, iparticle.end_vertex.position)
+			h["Reconstructables"].Fill(len(reco_children))
 			#
 
 			#finding selected decay products
 			maxd0 = 0
-			for ipart in get_reconstructable_children(iparticle, iparticle.end_vertex.position):
-				if getCharge(ipart) != 0 and ipart.momentum.pt()/abs(getCharge(ipart)) > 1000:
+			for ipart in reco_children:
+				if getCharge(ipart) != 0 and ipart.momentum.pt()/abs(getCharge(ipart)) > 1.0:
 					selectedDecayProds.append(ipart)
-					ipart_momentum = ROOT.TLorentzVector(ipart.momentum.px, ipart.momentum.py, ipart.momentum.pz, ipart.momentum.e)
 
+					ipart_momentum = ROOT.TLorentzVector(ipart.momentum.px, ipart.momentum.py, ipart.momentum.pz, ipart.momentum.e)
 					ipart_momentum.SetXYZM(ipart_momentum.Px(), ipart_momentum.Py(), ipart_momentum.Pz(),CHARGED_PION_MASS)
+
 					sumSelDecayProds += ipart_momentum
-				if abs(ipart.pid) == 13 and iparticle.momentum.pt() > 25000 and abs(get_d0(ipart)) > 2 and abs(get_d0(ipart)) < 300 and iparticle.momentum.abs_eta() < 2.5:
+
+				if abs(ipart.pid) == 13 and iparticle.momentum.pt() > 25.0 and abs(get_d0(ipart)) > 2 and abs(get_d0(ipart)) < 300 and iparticle.momentum.abs_eta() < 2.5:
 					hasAttachedMuon = True
 				if abs(get_d0(ipart))>maxd0:
 					maxd0 = abs(get_d0(ipart))
@@ -224,6 +266,8 @@ for i in range(numEvents):
 			endvertex_x = iparticle.end_vertex.position[0]
 			endvertex_y = iparticle.end_vertex.position[1]
 			transverseDistance = np.sqrt(endvertex_x**2 + endvertex_y**2)
+			h["transverse distance"].Fill(transverseDistance)
+
 			numSelDecay = len(selectedDecayProds)
 			InvMass = sumSelDecayProds.M()
 
@@ -231,7 +275,7 @@ for i in range(numEvents):
 
 			someVertexProperties = {"mass":InvMass,"ntrk":numSelDecay,"maxd0":maxd0,"rxy":transverseDistance}
 
-			if transverseDistance > 4 and transverseDistance < 300 and abs(iparticle.end_vertex.position[2]) < 300 and numSelDecay >= 3 and InvMass > 20000:
+			if transverseDistance > 4 and transverseDistance < 300 and abs(iparticle.end_vertex.position[2]) < 300 and numSelDecay >= 3 and InvMass > 20.:
 				passedVertexAcc = True
 				selectedVertexProperties = {"mass":InvMass,"ntrk":numSelDecay,"maxd0":maxd0,"rxy":transverseDistance}
 				if hasAttachedMuon:
@@ -245,21 +289,35 @@ for i in range(numEvents):
 					if randomNum <= NoMuonVertexEff:
 						vertexArr.append(iparticle.end_vertex.position)
 
-		if abs(iparticle.pid) == 13:
-			#muon event level acceptance
+		if abs(iparticle.pid) == 13 and iparticle.status==1:
+
+
 			d0 = get_d0(iparticle)
-			if iparticle.momentum.pt() > 62000 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 1.05:
+
+			#muon event level acceptance
+			#print("Muon", iparticle.momentum.pt(), d0)
+
+			if iparticle.momentum.pt() > 62.0and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 1.05:
 				muonEvtAcc.append(iparticle)
 				d0_array.append(abs(d0))
 
 
 			#muon level acceptance
-			if iparticle.momentum.pt() > 25000 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 2.5:
+			if iparticle.momentum.pt() > 25.0 and abs(d0) > 2 and abs(d0) < 300 and iparticle.momentum.abs_eta() < 2.5:
+				
+				h["Muon pt"].Fill(iparticle.momentum.pt())
+				h["Muon eta"].Fill(iparticle.momentum.eta())
+				h["Muon d0"].Fill(d0)
 				muonAcc.append(iparticle)
-				MuEff = MuLvlhist.GetBinContent(MuLvlhist.FindBin(abs(d0), iparticle.momentum.pt()/1000.))
+				MuEff = MuLvlhist.GetBinContent(MuLvlhist.FindBin(abs(d0), iparticle.momentum.pt()))
+
 				randomNum = random.rand()
 				if randomNum <= MuEff:
 					muonArr.append(iparticle)
+
+	# Event level properties 
+	sumInvisible = -sumVisible
+	#print("MET", sumInvisible.Pt())
 
 	if 	selectedVertexProperties == {"mass":-1,"ntrk":-1,"maxd0":-1,"rxy":-1}:
 		selectedVertexProperties = someVertexProperties
@@ -270,54 +328,52 @@ for i in range(numEvents):
 
 	if len(muonEvtAcc) > 0:
 		passedMuEvtAcc = True
-		MuEvtEff = MuEvtLvlHist.GetBinContent(MuEvtLvlHist.FindBin(min(d0_array), sumInvisible.Pt()/1000.))
+		MuEvtEff = MuEvtLvlHist.GetBinContent(MuEvtLvlHist.FindBin(min(d0_array), sumInvisible.Pt()))
 		randomNum = random.rand()
 		if randomNum <= MuEvtEff: evtPassedMuEff = True
 	if len(muonAcc) > 0:
 		passedMuAcc = True
 
+
 	MET.append(sumInvisible.Pt())
 
-	if sumInvisible.Pt() > 100000:
+	if sumInvisible.Pt() > 100.:
+		passedMETacc = True
 		METacceptance.append(sumInvisible.Pt())
-		h["METacceptance"].Fill(sumInvisible.Pt()/1000.)
-		truthMETefficiency = truthMEThist.GetBinContent(truthMEThist.FindBin(sumInvisible.Pt()/1000.))
+		h["METacceptance"].Fill(sumInvisible.Pt())
+		truthMETefficiency = truthMEThist.GetBinContent(truthMEThist.FindBin(sumInvisible.Pt()))
 		randomNum = random.rand()
 		if randomNum <= truthMETefficiency: evtPassedMETeff = True
 
-	if len(METacceptance) > 0:
-		passedMETacc = True
 
-
-	h["MET"].Fill(sumInvisible.Pt()/1000.)
+	h["MET"].Fill(sumInvisible.Pt())
 
 	h["MET cut-flow"].Fill(0)
-	h["Muon cut-flow"].Fill(0)
 
 
 	if evtPassedMETeff:
 		h["MET cut-flow"].Fill(1)
-		# h["MET_Cut1"].Fill(sumInvisible.Pt()/1000.)
-		if len(vertexArr):
+		#print( "Vtxs" , len(vertexArr), "Muons", len(muonArr) )
+		if len(vertexArr)>0:
 			h["MET cut-flow"].Fill(2)
-			# h["MET_Cut2"].Fill(sumInvisible.Pt()/1000.)
-			if len(muonArr):
+			if len(muonArr)>0:
 				h["MET cut-flow"].Fill(3)
 				# passed MET SR
-				# h["MET_Cut3"].Fill(sumInvisible.Pt()/1000.)
 
 
 
 	SRMETCutFlowBools = [True,evtPassedMETeff, len(vertexArr), len(muonArr)]
-	fillDistributionsAtCuts("SRMET MET", sumInvisible.Pt()/1000., SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET MET", sumInvisible.Pt(), SRMETCutFlowBools)
 	fillDistributionsAtCuts("SRMET ntrk", selectedVertexProperties["ntrk"], SRMETCutFlowBools)
-	fillDistributionsAtCuts("SRMET mvtx", selectedVertexProperties["mass"]/1000., SRMETCutFlowBools)
+	fillDistributionsAtCuts("SRMET mvtx", selectedVertexProperties["mass"], SRMETCutFlowBools)
 	fillDistributionsAtCuts("SRMET maxd0", selectedVertexProperties["maxd0"], SRMETCutFlowBools)
 	fillDistributionsAtCuts("SRMET rxy", selectedVertexProperties["rxy"], SRMETCutFlowBools)
 
-	fillDistributionsAtCuts2D("SRMET mvtx ntrk", selectedVertexProperties["mass"]/1000., selectedVertexProperties["ntrk"], SRMETCutFlowBools)
-	fillDistributionsAtCuts2D("SRMET MET mupt", sumInvisible.Pt()/1000., maxMuonPt/1000., SRMETCutFlowBools)
+	fillDistributionsAtCuts2D("SRMET mvtx ntrk", selectedVertexProperties["mass"], selectedVertexProperties["ntrk"], SRMETCutFlowBools)
+	fillDistributionsAtCuts2D("SRMET MET mupt", sumInvisible.Pt(), maxMuonPt, SRMETCutFlowBools)
 
+
+	h["Muon cut-flow"].Fill(0)
 
 	if evtPassedMuEff:
 		h["Muon cut-flow"].Fill(1)
@@ -328,7 +384,7 @@ for i in range(numEvents):
 				# passed mu SR
 
 	SRMUCutFlowBools = [True,evtPassedMuEff, len(vertexArr), len(muonArr)]
-	fillDistributionsAtCuts("SRMU mupt", maxMuonPt/1000., SRMUCutFlowBools)
+	fillDistributionsAtCuts("SRMU mupt", maxMuonPt, SRMUCutFlowBools)
 
 
 	#store histogram in root file and use a different script to get the number of events in this last bin
@@ -346,8 +402,8 @@ C.SaveAs("MET.pdf")
 outputFile.Write()
 
 C1 = ROOT.TCanvas("C1", "", 600, 600)
-h["METacceptance"].Draw()
-C1.SaveAs("METacceptance.pdf")
+h["MET"].Draw()
+C1.SaveAs("MET.pdf")
 outputFile.Write()
 
 C2 = ROOT.TCanvas("C2", "", 600, 600)
@@ -359,8 +415,8 @@ h["Selected decay prods"].Draw()
 C3.SaveAs("Selected_decay_products.pdf")
 
 C4 = ROOT.TCanvas("C4", "", 600, 600)
-h["decay products"].Draw()
-C4.SaveAs("decay_products.pdf")
+h["transverse distance"].Draw()
+C4.SaveAs("transverseDistance.pdf")
 
 C5 = ROOT.TCanvas("C5", "", 600, 600)
 h["proper decay time"].Draw()
@@ -368,13 +424,36 @@ C5.SaveAs("rawproperdecaytime.pdf")
 
 C6 = ROOT.TCanvas("C6", "", 600, 600)
 h["MET cut-flow"].Draw()
+C6.SetLogy()
+h["MET cut-flow"].SetMaximum(numEvents*100)
+h["MET cut-flow"].SetMinimum(0.1)
 C6.SaveAs("METcutFlow.pdf")
 
 C7 = ROOT.TCanvas("C7", "", 600, 600)
 h["Muon cut-flow"].Draw()
+C7.SetLogy()
+h["Muon cut-flow"].SetMaximum(numEvents*100)
+h["Muon cut-flow"].SetMinimum(0.1)
 C7.SaveAs("MuonCutFlow.pdf")
 outputFile.Close()
 
+C8 = ROOT.TCanvas("C8", "", 600, 600)
+h["Muon pt"].Draw()
+C8.SetLogy()
+C8.SaveAs("MuonPt.pdf")
+outputFile.Close()
+
+C9 = ROOT.TCanvas("C9", "", 600, 600)
+h["Muon eta"].Draw()
+C9.SetLogy()
+C9.SaveAs("MuonEta.pdf")
+outputFile.Close()
+
+C10 = ROOT.TCanvas("C10", "", 600, 600)
+h["Muon d0"].Draw()
+C10.SetLogy()
+C10.SaveAs("Muond0.pdf")
+outputFile.Close()
 
 for key in h:
 	h[key].Write()
@@ -387,13 +466,13 @@ histogramFile.WriteObject(h["MET cut-flow"], "MET cut-flow")
 histogramFile.WriteObject(h["Muon cut-flow"], "Muon cut-flow")
 histogramFile.Close()
 
-bins = np.linspace(0, 3., 31)
+bins = np.linspace(0, 300, 100)
 data_entries, bins = np.histogram(properdecaytime, bins=bins)
 
 binscenters = np.array([0.5 * (bins[i] + bins[i+1]) for i in range(len(bins)-1)])
 popt, pcov = curve_fit(fit_function, xdata=binscenters[2:], ydata=data_entries[2:], p0=[2500, 0.3])
 #print(popt)
-xspace = np.linspace(0, 3., 100000)
+xspace = np.linspace(0, 300., 100000)
 
 fig = plt.figure()
 
