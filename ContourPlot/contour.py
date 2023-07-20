@@ -108,8 +108,10 @@ yArray = points[:,1]
 yScaling = (np.max(xArray)-np.min(xArray))/(np.max(yArray)-np.min(yArray)) if np.max(yArray) else 1
 yArray = yArray*yScaling
 
-rbf = scipy.interpolate.Rbf(xArray, yArray, zvalues, function="linear", smooth=0.5 , epsilon=0.001)
 
+# RBF
+
+rbf = scipy.interpolate.Rbf(xArray, yArray, zvalues, function="multiquadric", smooth=0.5 , epsilon=0.5)
 
 xlinspace = np.linspace(xArray.min(),
                         xArray.max(),
@@ -121,6 +123,13 @@ ylinspace = np.linspace(yArray.min(),
 xymeshgrid = np.meshgrid(xlinspace,ylinspace)
 
 grid_z1 = rbf(xymeshgrid[0], xymeshgrid[1])
+
+
+# griddata
+
+# grid_z1 = scipy.interpolate.griddata( (xArray,yArray), zvalues, (xymeshgrid[0], xymeshgrid[1]), method="cubic" )
+
+
 
 
 xymeshgrid[1] = xymeshgrid[1] / yScaling
@@ -174,11 +183,17 @@ plt.clf()
 # print(len(contours.collections[0].get_paths()))
 p = contours.collections[0].get_paths()[0]
 v1 = p.vertices
-p = contours.collections[0].get_paths()[1]
-v2 = p.vertices
 
-v = np.concatenate((v1,v2))
-v = v[54:]
+try:
+    p = contours.collections[0].get_paths()[1]
+    v2 = p.vertices
+    v = np.concatenate((v1,v2))
+except:
+    v = v1
+    pass
+
+v = v[160:]
+# v = v[54:]
 # v = v[95:]
 
 x = v[:,0]
@@ -251,7 +266,9 @@ mycolor = "tab:orange"
 doFillBetween(thiswork_x,thiswork_y,color=mycolor)
 plt.plot(thiswork_x[1:-1],thiswork_y[1:-1],"-",c=mycolor,lw=1)
 
-plt.text(thiswork_x[200]*0.8,thiswork_y[200],"ATLAS DV+mu\n"+r"136 fb$^{-1}$"+"\n(This work)",size=12,c=mycolor,weight='bold',ha="right")
+labelIndex = 200
+
+plt.text(thiswork_x[labelIndex]*0.8,thiswork_y[labelIndex],"ATLAS DV+mu\n"+r"136 fb$^{-1}$"+"\n(This work)",size=12,c=mycolor,weight='bold',ha="right")
 
 
 ax.set_xlabel(r"$\lambda''_{323}$")
