@@ -35,7 +35,7 @@ for ifile in os.listdir("cutflowFiles"):
         crossSection = xsData["data"][str(stopMass)]["xsec_pb"] #pb
         normCutFlowHist = cutFlowHist.Clone("%s normalized cut-flow"%SR)
         normCutFlowHist.Scale(luminosity*crossSection/numGeneratedEvts)
-        normCutFlowHist.Write()
+        #normCutFlowHist.Write()
 
         normalizedNumEvts = finalNumEvts*(luminosity*crossSection/numGeneratedEvts)
 
@@ -49,4 +49,4 @@ for ifile in os.listdir("cutflowFiles"):
         #print(f"{crossSection=}")
         #print(f"{numGeneratedEvts=}")
 
-cutFlowFile.Write()
+#cutFlowFile.Write()
