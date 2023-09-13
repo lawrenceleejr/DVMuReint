@@ -43,8 +43,10 @@ for i in range(len(seperatedStrings)):
 			string += j
 	stringList.append(string)
 stopMass = int(stringList[1]) #GeV
-neutralinoMass = int(stringList[2]) #GeV
+neutralinoMass = 200 #GeV
 neutralinoLifetime = int(stringList[3]) #ps
+print(stopMass)
+print(neutralinoLifetime)
 
 evt = pyhepmc_ng.GenEvent(momentum_unit=pyhepmc_ng.Units.MEV, length_unit=pyhepmc_ng.Units.MM)
 
