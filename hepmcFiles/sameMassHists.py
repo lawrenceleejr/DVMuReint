@@ -20,7 +20,6 @@ for ifile in os.listdir("cutflowFiles"):
 		i += 1
 		cutFlowFile = ROOT.TFile("cutflowFiles/%s"%filename)
 		nrmHist = cutFlowFile.Get("%s normalized cut-flow"%SR).Clone("nrmCutFlow%s"%lifetime)
-		nrmHist.Draw("B")
 		if i == 1: nrmHist.Draw("")
 		else: nrmHist.Draw("same")
 
