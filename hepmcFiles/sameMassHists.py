@@ -10,10 +10,12 @@ mass = str(sys.argv[1])
 SR = str(sys.argv[2])
 
 C = ROOT.TCanvas("C", "C", 800, 600)
-ROOT.gStyle.SetPalette(106)
+#ROOT.gStyle.SetPalette(106)
 i = 0
 hists = {}
 lifetimes = [100,1000,10000]
+histStack = ROOT.THStack("hs", "%s GeV %s SR Normalized Cutflows"%(mass, SR))
+ROOT.gStyle.SetPalette(106)
 
 for ifile in os.listdir("cutflowFiles"):
 	filename = os.fsdecode(ifile)
@@ -27,11 +29,15 @@ for ifile in os.listdir("cutflowFiles"):
 			i += 1
 			cutFlowFile = ROOT.TFile("cutflowFiles/%s"%filename, "READ")
 			ROOT.gROOT.cd()
-			hists[lifetime] = cutFlowFile.Get("%s normalized cut-flow"%SR).Clone("nrmCutFlow%s"%lifetime)
+		#	hists[lifetime] = cutFlowFile.Get("%s normalized cut-flow"%SR).Clone("nrmCutFlow%s"%lifetime)
+			histStack.Add(cutFlowFile.Get("%s normalized cut-flow"%SR).Clone("nrmCutFlow%s"%lifetime))
 		#	print(ROOT.gDirectory.ls())
-			print(hists[lifetime].GetBinContent(2))
-			if i == 1: hists[lifetime].Draw("pfc hist")
-			else: hists[lifetime].Draw("pfc hist same")
+		#	print(hists[lifetime].GetBinContent(2))
+		#	if i == 1: hists[lifetime].Draw("pfc plc hist")
+		#	else: hists[lifetime].Draw("pfc plc hist same")
+			
 
+
+histStack.Draw("pfc nostack")
 C.SetLogy()
 C.SaveAs("%sGeV_normHistStack.pdf"%mass)
