@@ -15,7 +15,11 @@ i = 0
 hists = {}
 lifetimes = [100,1000,10000]
 #histStack = ROOT.THStack("hs", "%s GeV %s SR Normalized Cutflows"%(mass, SR))
-ROOT.gStyle.SetPalette(1)
+ROOT.gStyle.SetPalette(109)
+ROOT.gStyle.SetOptTitle(0)
+ROOT.gStyle.SetOptStat(0)
+legend = ROOT.TLegend(0.7, 0.7, 0.89,0.89)
+legend.SetBorderSize(0)
 
 for ifile in os.listdir("cutflowFiles"):
 	filename = os.fsdecode(ifile)
@@ -30,14 +34,24 @@ for ifile in os.listdir("cutflowFiles"):
 			cutFlowFile = ROOT.TFile("cutflowFiles/%s"%filename, "READ")
 			ROOT.gROOT.cd()
 			hists[lifetime] = cutFlowFile.Get("%s normalized cut-flow"%SR).Clone("nrmCutFlow%s"%lifetime)
-		#	histStack.Add(cutFlowFile.Get("%s normalized cut-flow"%SR).Clone("nrmCutFlow%s"%lifetime))
-		#	print(ROOT.gDirectory.ls())
-		#	print(hists[lifetime].GetBinContent(2))
+			hists[lifetime].SetLineWidth(3)
+			hists[lifetime].GetXaxis().SetNdivisions(4) 
+			legend.AddEntry(hists[lifetime], "%s ps"%lifetime, "l")
 			if i == 1: hists[lifetime].Draw("plc hist")
 			else: hists[lifetime].Draw("plc hist same")
 			
+			if lifetime == 100:
+				hists[lifetime].SetLineColor(432+1)
+			if lifetime == 1000:
+                                hists[lifetime].SetLineColor(616+1)
+			if lifetime == 10000:
+                                hists[lifetime].SetLineColor(600+2)			
+
+
 
 
 #histStack.Draw("pfc nostack")
 C.SetLogy()
-C.SaveAs("%sGeV_normHistStack.pdf"%mass)
+legend.SetHeader("Lifetime", "C")
+legend.Draw()
+C.SaveAs("massCutFlowPDFs/%sGeV_normHistStack.pdf"%mass)
