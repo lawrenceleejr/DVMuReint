@@ -16,7 +16,7 @@ hists = {}
 lifetimes = [100,1000,10000]
 ROOT.gStyle.SetOptTitle(0)
 ROOT.gStyle.SetOptStat(0)
-legend = ROOT.TLegend(0.7, 0.7, 0.89,0.89)
+legend = ROOT.TLegend(0.15, 0.15, 0.48,0.5)
 legend.SetBorderSize(0)
 
 #c100 = ROOT.TColor.GetFreeColorIndex()
@@ -71,6 +71,6 @@ for ifile in os.listdir("cutflowFiles"):
 
 
 C.SetLogy()
-legend.SetHeader("Lifetime", "C")
+legend.SetHeader("Stop mass, neutralino lifetime", "C")
 legend.Draw()
 C.SaveAs("massCutFlowPDFs/%sand%sGeV_normHistStack.pdf"%(mass1,mass2))
